@@ -13,6 +13,9 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef MODULE_H
-int external(int param);
-#endif
+#include "mh_uart.h"
+
+int external(int param)
+{
+  return param * 2;
+}

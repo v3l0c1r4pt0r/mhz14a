@@ -19,9 +19,9 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
-#include "module.h"
+#include "mh_uart.h"
 
-#include "module.c"
+#include "mh_uart.c"
 
 typedef struct {int input; int expected;} vector_t;
 

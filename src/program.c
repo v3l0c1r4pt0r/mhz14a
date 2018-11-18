@@ -17,7 +17,7 @@
 #include <limits.h>
 #include <getopt.h>
 
-#include "module.h"
+#include "mh_uart.h"
 
 #define LONG_OPTION (( CHAR_MAX + 1 ))
 

@@ -13,9 +13,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-#include "module.h"
-
-int external(int param)
-{
-  return param * 2;
-}
+#ifndef MH_UART_H
+#define MH_UART_H
+int external(int param);
+#endif // MH_UART_H

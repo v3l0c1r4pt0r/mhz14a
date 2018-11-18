@@ -1,1 +1,1 @@
-add_executable(program program.c module.c)
+add_executable(program program.c mh_uart.c)
