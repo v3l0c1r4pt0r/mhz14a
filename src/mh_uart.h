@@ -15,5 +15,60 @@
  */
 #ifndef MH_UART_H
 #define MH_UART_H
-int external(int param);
+#include <stdint.h>
+
+#define __packed__ __attribute__ ((packed))
+
+typedef struct {
+  uint8_t start;
+  uint8_t reserved[7];
+  uint8_t checksum;
+} __packed__ pkt_t;
+
+typedef struct {
+  uint8_t start;
+  uint8_t sensor;
+  uint8_t reserved[6];
+  uint8_t checksum;
+} __packed__ sendpkt_t;
+
+typedef struct {
+  uint8_t start;
+  uint8_t command;
+  uint8_t reserved[6];
+  uint8_t checksum;
+} __packed__ returnpkt_t;
+
+typedef struct {
+  uint8_t start;
+  uint8_t sensor;
+  uint8_t command;
+  uint8_t reserved[5];
+  uint8_t checksum;
+} __packed__ read_gas_t;
+
+typedef struct {
+  uint8_t start;
+  uint8_t sensor;
+  uint8_t command;
+  uint8_t reserved[5];
+  uint8_t checksum;
+} __packed__ calibrate_zero_t;
+
+typedef struct {
+  uint8_t start;
+  uint8_t sensor;
+  uint8_t command;
+  uint16_t span_point; /* big endian */
+  uint8_t reserved[3];
+  uint8_t checksum;
+} __packed__ calibrate_span_t;
+
+typedef struct {
+  uint8_t start;
+  uint8_t command;
+  uint16_t concentration; /* big endian */
+  uint8_t reserved[4];
+  uint8_t checksum;
+} __packed__ return_gas_t;
 #endif // MH_UART_H
