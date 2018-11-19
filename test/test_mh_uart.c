@@ -23,33 +23,27 @@
 
 #include "mh_uart.c"
 
-typedef struct {int input; int expected;} vector_t;
-
-const vector_t vectors[] = {
-  {0,0},
-  {1,2},
-  {2,4},
-  {INT_MAX/2, INT_MAX-1},
-  {INT_MAX, -2},
-};
-
-static void test_external(void **state)
-{
-    int actual;
-    int i;
-
-    for (i = 0; i < sizeof(vectors)/sizeof(vector_t); i++)
-    {
-      const vector_t *vector = &vectors[i];
-      actual = external(vector->input);
-      assert_int_equal(vector->expected, actual);
-    }
+#define test_sizeof(name) static void test_sizeof_##name(void **state) \
+{ \
+  assert_int_equal(sizeof(pkt_t), sizeof(name)); \
 }
+
+test_sizeof(sendpkt_t);
+test_sizeof(returnpkt_t);
+test_sizeof(read_gas_t);
+test_sizeof(calibrate_zero_t);
+test_sizeof(calibrate_span_t);
+test_sizeof(return_gas_t);
 
 int main()
 {
   const struct CMUnitTest tests[] = {
-    cmocka_unit_test(test_external),
+    cmocka_unit_test(test_sizeof_sendpkt_t),
+    cmocka_unit_test(test_sizeof_returnpkt_t),
+    cmocka_unit_test(test_sizeof_read_gas_t),
+    cmocka_unit_test(test_sizeof_calibrate_zero_t),
+    cmocka_unit_test(test_sizeof_calibrate_span_t),
+    cmocka_unit_test(test_sizeof_return_gas_t),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
