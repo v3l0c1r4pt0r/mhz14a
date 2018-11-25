@@ -71,4 +71,6 @@ typedef struct {
   uint8_t reserved[4];
   uint8_t checksum;
 } __packed__ return_gas_t;
+
+uint8_t checksum(pkt_t *packet);
 #endif // MH_UART_H

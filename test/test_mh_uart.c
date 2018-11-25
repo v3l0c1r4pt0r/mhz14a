@@ -28,6 +28,17 @@
   assert_int_equal(sizeof(pkt_t), sizeof(name)); \
 }
 
+static void test_checksum(void **state)
+{
+  pkt_t packet = {.start = 0xff, .reserved = {1,2,3,4,5,6,7}};
+  uint8_t expected = 0xe4;
+  uint8_t actual;
+
+  actual = checksum(&packet);
+
+  assert_int_equal(expected, actual);
+}
+
 test_sizeof(sendpkt_t);
 test_sizeof(returnpkt_t);
 test_sizeof(read_gas_t);
@@ -44,6 +55,7 @@ int main()
     cmocka_unit_test(test_sizeof_calibrate_zero_t),
     cmocka_unit_test(test_sizeof_calibrate_span_t),
     cmocka_unit_test(test_sizeof_return_gas_t),
+    cmocka_unit_test(test_checksum),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);

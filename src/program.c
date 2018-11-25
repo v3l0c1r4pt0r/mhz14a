@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   int one = 10;
   int two = 2;
   int result = internal(one, two);
-  result += external(result);
+  //result += external(result);
   printf("%d\n", result);
 
   while (1) {

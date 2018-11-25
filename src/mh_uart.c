@@ -15,7 +15,7 @@
  */
 #include "mh_uart.h"
 
-int external(int param)
+uint8_t checksum(pkt_t *packet)
 {
-  return param * 2;
+  return -1;
 }
