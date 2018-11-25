@@ -18,6 +18,7 @@
 #include <getopt.h>
 
 #include "mh_uart.h"
+#include "config.h"
 
 #define LONG_OPTION (( CHAR_MAX + 1 ))
 
