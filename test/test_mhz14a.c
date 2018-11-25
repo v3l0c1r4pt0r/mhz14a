@@ -23,15 +23,6 @@
 #include "mhz14a.c"
 #undef main
 
-typedef struct {int a; int b; int expected;} vector_t;
-
-const vector_t vectors[] = {
-  {0,1,0},
-  {1,0,0},
-  {1,1,1},
-  {2,3,6},
-};
-
 int __wrap_printf (const char *format, ...)
 {
   int param1;
@@ -48,24 +39,6 @@ int __wrap_printf (const char *format, ...)
 
   /* get mocked return value from will_return() call */
   return mock();
-}
-
-static void test_internal(void **state)
-{
-    int actual;
-    int i;
-
-    for (i = 0; i < sizeof(vectors)/sizeof(vector_t); i++)
-    {
-      /* get i-th inputs and expected values as vector */
-      const vector_t *vector = &vectors[i];
-
-      /* call function under test */
-      actual = internal(vector->a, vector->b);
-
-      /* assert result */
-      assert_int_equal(vector->expected, actual);
-    }
 }
 
 static void test_main(void **state)
@@ -90,7 +63,6 @@ static void test_main(void **state)
 int main()
 {
   const struct CMUnitTest tests[] = {
-    cmocka_unit_test(test_internal),
     cmocka_unit_test(test_main),
   };
 

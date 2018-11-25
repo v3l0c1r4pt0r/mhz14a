@@ -14,43 +14,41 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 #include <getopt.h>
 
 #include "mh_uart.h"
+#include "mh.h"
 #include "config.h"
-
-#define LONG_OPTION (( CHAR_MAX + 1 ))
-
-int internal(int a, int b)
-{
-  return a * b;
-}
 
 int main(int argc, char **argv)
 {
   int c;
   int digit_optind = 0;
-
-  int one = 10;
-  int two = 2;
-  int result = internal(one, two);
-  //result += external(result);
-  printf("%d\n", result);
+  mhopt_t opts;
 
   while (1) {
     int this_option_optind = optind ? optind : 1;
     int option_index = 0;
     static struct option long_options[] = {
       /* {name, has_arg, flag, val} */
-      {"option", required_argument, 0, 'o' },
-      {"switch", no_argument, 0, 's' },
-      {"dual", optional_argument, 0, 'd' },
-      {"long", no_argument, 0, LONG_OPTION },
+      /* UART options */
+      {"baud", required_argument, 0, 'b' },
+      {"mode", required_argument, 0, 'm' },
+      {"dev", required_argument, 0, 'd' },
+      /* MH-Z14A functions */
+      {"read", no_argument, 0, 'r' },
+      {"zero", no_argument, 0, 'z' },
+      {"span", required_argument, 0, 's' },
+      /* general */
+      {"version", no_argument, 0, 'v' },
+      {"help", no_argument, 0, 'h' },
       {0, 0, 0, 0 }
     };
 
-    c = getopt_long(argc, argv, "o:sd::",
+    c = getopt_long(argc, argv, "b:m:d:rzs:vh",
         long_options, &option_index);
     if (c == -1)
       break;
@@ -74,32 +72,45 @@ int main(int argc, char **argv)
         printf("option %c\n", c);
         break;
 
-      case 'o':
-        /* --option=VAL */
-        printf("option with value '%s'\n", optarg);
+      case 'b':
+        /* --baud=BAUDRATE */
+        opts.baudrate = atol(optarg); // TODO: maybe safer ?
         break;
 
-      case 's':
-        /* --switch */
-        printf("switch\n");
+      case 'm':
+        /* --mode=MODE */
         break;
 
       case 'd':
-        /* --dual[=VAL] */
-        if (optarg == NULL)
-        {
-        printf("dual without value\n");
-        }
-        else
-        {
-        printf("dual with value '%s'\n", optarg);
-        }
+        /* --device=FILE */
+        opts.device = strdup(optarg);
         break;
 
-      case LONG_OPTION:
-        /* --long */
-        printf("long option\n");
+      case 'r':
+        /* --read */
+        opts.command = CMD_GAS_CONCENTRATION;
         break;
+
+      case 's':
+        /* --span=SPANPOINT */
+        opts.command = CMD_CALIBRATE_SPAN;
+        opts.span_point = atol(optarg);
+        break;
+
+      case 'z':
+        /* --zero */
+        opts.command = CMD_CALIBRATE_ZERO;
+        break;
+
+      case 'v':
+        /* --version */
+        printf("mh-z14a version %s\n", MHZ14A_VERSION);
+        return 0;
+
+      case 'h':
+        /* --help */
+        printf("Usage: %s -b BAUD | -v | -h\n");
+        return 0;
 
       case '?':
         /* -* not in optstring */
@@ -113,10 +124,8 @@ int main(int argc, char **argv)
 
   /* positional arguments */
   if (optind < argc) {
-      printf("non-option ARGV-elements: ");
-      while (optind < argc)
-    printf("%s ", argv[optind++]);
-      printf("\n");
+    printf("Error: too many arguments provided!\n");
+    return 1;
   }
 
   return 0;
