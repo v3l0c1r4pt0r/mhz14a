@@ -13,9 +13,24 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
+#include <stddef.h>
+
 #include "mh_uart.h"
 
 uint8_t checksum(pkt_t *packet)
 {
-  return -1;
+  uint8_t cs = 0xff;
+  int i;
+
+  if (packet == NULL)
+  {
+    return cs;
+  }
+
+  for (i = 0; i < sizeof(packet->reserved); i++)
+  {
+    cs -= packet->reserved[i];
+  }
+  cs++;
+  return cs;
 }
