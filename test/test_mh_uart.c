@@ -39,6 +39,28 @@ static void test_checksum(void **state)
   assert_int_equal(expected, actual);
 }
 
+static void test_checksum_overflow(void **state)
+{
+  pkt_t packet = {.start = 0xff, .reserved = {0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff}};
+  uint8_t expected = 0x7;
+  uint8_t actual;
+
+  actual = checksum(&packet);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_checksum_inval_in(void **state)
+{
+  uint8_t expected = 0xff; // TODO: are you sure ?
+  uint8_t actual;
+
+  actual = checksum(NULL);
+
+  assert_int_equal(expected, actual);
+}
+
 test_sizeof(sendpkt_t);
 test_sizeof(returnpkt_t);
 test_sizeof(read_gas_t);
@@ -56,6 +78,8 @@ int main()
     cmocka_unit_test(test_sizeof_calibrate_span_t),
     cmocka_unit_test(test_sizeof_return_gas_t),
     cmocka_unit_test(test_checksum),
+    cmocka_unit_test(test_checksum_overflow),
+    cmocka_unit_test(test_checksum_inval_in),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
