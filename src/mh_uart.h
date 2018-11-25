@@ -19,6 +19,12 @@
 
 #define __packed__ __attribute__ ((packed))
 
+typedef enum {
+  CMD_GAS_CONCENTRATION = 0x86,
+  CMD_CALIBRATE_ZERO = 0x87,
+  CMD_CALIBRATE_SPAN = 0x88,
+} command_t;
+
 typedef struct {
   uint8_t start;
   uint8_t reserved[7];
