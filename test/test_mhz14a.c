@@ -20,7 +20,7 @@
 #include <cmocka.h>
 
 #define main __real_main
-#include "program.c"
+#include "mhz14a.c"
 #undef main
 
 typedef struct {int a; int b; int expected;} vector_t;

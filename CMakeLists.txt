@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.0)
-project (cmake_template)
+project (mhz14a)
 
 set(MHZ14A_VERSION "0.1.0")
 
