@@ -27,7 +27,16 @@ int main(int argc, char **argv)
 {
   int c;
   int digit_optind = 0;
-  mhopt_t opts;
+  mhopt_t opts = {
+    .device = NULL,
+    .baudrate = 9600,
+    .databits = 8,
+    .parity = 'N',
+    .stopbits = 1,
+    .command = 0,
+    .gas_concentration = 0,
+    .span_point = 0
+  };
   int result;
 
   while (1) {
@@ -80,6 +89,10 @@ int main(int argc, char **argv)
 
       case 'm':
         /* --mode=MODE */
+        opts.databits = optarg[0] - '0';
+        opts.parity = optarg[1];
+        opts.stopbits = optarg[2] - '0';
+
         break;
 
       case 'd':
@@ -142,8 +155,10 @@ int main(int argc, char **argv)
       case CMD_CALIBRATE_SPAN:
       case CMD_CALIBRATE_ZERO:
         printf("Error! Not implemented\n");
+        return 42;
       default:
         printf("Error! Internal error on command %x\n", opts.command);
+        return -1;
     }
   }
 

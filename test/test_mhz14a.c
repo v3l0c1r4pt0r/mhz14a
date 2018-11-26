@@ -23,47 +23,62 @@
 #include "mhz14a.c"
 #undef main
 
-int __wrap_printf (const char *format, ...)
+char *read_argv[] = {
+  "./mhz14a",
+  "-b", "115200",
+  "-m", "9E2",
+  "-d", "/dev/ttyS0",
+  "-r"
+};
+
+int __wrap_process_command (mhopt_t *opts)
 {
-  int param1;
+  char *device = opts->device;
+  uint32_t baudrate = opts->baudrate;
+  uint8_t databits = opts->databits;
+  uint8_t parity = opts->parity;
+  uint8_t stopbits = opts->stopbits;
+  command_t command = opts->command;
+  uint16_t gas_concentration = opts->gas_concentration;
+  uint16_t span_point = opts->span_point;
 
-  /* extract result from vargs ('printf("%d\n", result)') */
-  va_list args;
-  va_start(args, format);
-  param1 = va_arg(args, int);
-  va_end(args);
+  check_expected(device);
+  check_expected(baudrate);
+  check_expected(databits);
+  check_expected(parity);
+  check_expected(stopbits);
+  check_expected(command);
+  check_expected(gas_concentration);
+  check_expected(span_point);
 
-  /* ensure that parameters match expecteds in expect_*() calls  */
-  check_expected_ptr(format);
-  check_expected(param1);
-
-  /* get mocked return value from will_return() call */
   return mock();
 }
 
-static void test_main(void **state)
+static void test_main_read(void **state)
 {
   int expected = 0;
   int actual;
 
-  /* expect parameters to printf call */
-  expect_string(__wrap_printf, format, "%d\n");
-  expect_value(__wrap_printf, param1, 60);
+  expect_string(__wrap_process_command, device, "/dev/ttyS0");
+  expect_value(__wrap_process_command, baudrate, 115200);
+  expect_value(__wrap_process_command, databits, 9);
+  expect_value(__wrap_process_command, parity, 'E');
+  expect_value(__wrap_process_command, stopbits, 2);
+  expect_value(__wrap_process_command, command, CMD_GAS_CONCENTRATION);
+  expect_value(__wrap_process_command, gas_concentration, 0);
+  expect_value(__wrap_process_command, span_point, 0);
 
-  /* printf should return 3 */
-  will_return(__wrap_printf, 3);
+  will_return(__wrap_process_command, 0);
 
-  /* call __real_main as this is main() from program.c */
-  actual = __real_main(0, NULL);
+  actual = __real_main(sizeof(read_argv)/sizeof(char*), read_argv);
 
-  /* assert that main return success */
   assert_int_equal(expected, actual);
 }
 
 int main()
 {
   const struct CMUnitTest tests[] = {
-    cmocka_unit_test(test_main),
+    cmocka_unit_test(test_main_read),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
