@@ -28,6 +28,7 @@ int main(int argc, char **argv)
   int c;
   int digit_optind = 0;
   mhopt_t opts;
+  int result;
 
   while (1) {
     int this_option_optind = optind ? optind : 1;
@@ -128,5 +129,23 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  return 0;
+  result = process_command(&opts);
+  if (result != 0)
+  {
+    printf("Error! Execution returned %x\n", result);
+  }
+  else
+  {
+    switch (opts.command)
+    {
+      case CMD_GAS_CONCENTRATION:
+      case CMD_CALIBRATE_SPAN:
+      case CMD_CALIBRATE_ZERO:
+        printf("Error! Not implemented\n");
+      default:
+        printf("Error! Internal error on command %x\n", opts.command);
+    }
+  }
+
+  return result;
 }
