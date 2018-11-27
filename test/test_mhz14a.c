@@ -31,6 +31,37 @@ char *read_argv[] = {
   "-r"
 };
 
+char *wrong_mode_argv1[] = {
+  "./mhz14a",
+  "-m", "an1"
+};
+
+char *wrong_mode_argv2[] = {
+  "./mhz14a",
+  "-m", "811"
+};
+
+char *wrong_mode_argv3[] = {
+  "./mhz14a",
+  "-m", "8nb"
+};
+
+char *wrong_mode_argv4[] = {
+  "./mhz14a",
+  "-m", "test"
+};
+
+int __wrap_printf (const char *format, ...)
+{
+  return 1;
+}
+
+/* if printf has no VARGS it is replaced with puts() */
+int __wrap_puts (const char *format)
+{
+  return 1;
+}
+
 int __wrap_process_command (mhopt_t *opts)
 {
   char *device = opts->device;
@@ -75,10 +106,29 @@ static void test_main_read(void **state)
   assert_int_equal(expected, actual);
 }
 
+#define test_main_wrong_mode(num) static void test_main_wrong_mode##num(void **state) \
+{ \
+  int expected = 1; \
+  int actual; \
+ \
+  actual = __real_main(sizeof(wrong_mode_argv##num)/sizeof(char*), wrong_mode_argv##num); \
+ \
+  assert_int_equal(expected, actual); \
+}
+
+test_main_wrong_mode(1);
+test_main_wrong_mode(2);
+test_main_wrong_mode(3);
+test_main_wrong_mode(4);
+
 int main()
 {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test(test_main_read),
+    cmocka_unit_test(test_main_wrong_mode1),
+    cmocka_unit_test(test_main_wrong_mode2),
+    cmocka_unit_test(test_main_wrong_mode3),
+    cmocka_unit_test(test_main_wrong_mode4),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
