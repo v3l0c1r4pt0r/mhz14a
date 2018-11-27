@@ -27,6 +27,8 @@ int main(int argc, char **argv)
 {
   int c;
   int digit_optind = 0;
+  optind = 0;
+  optarg = NULL;
   mhopt_t opts = {
     .device = NULL,
     .baudrate = 9600,
