@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <string.h>
 #include <getopt.h>
+#include <ctype.h>
 
 #include "mh_uart.h"
 #include "mh.h"
@@ -91,6 +92,15 @@ int main(int argc, char **argv)
 
       case 'm':
         /* --mode=MODE */
+        if (strlen(optarg) != 3 ||
+            !isdigit(optarg[0]) ||
+            (!isupper(optarg[1]) && !islower(optarg[1])) ||
+            !isdigit(optarg[2]))
+        {
+          printf("Error! Unsupported mode\n");
+          return 1;
+        }
+
         opts.databits = optarg[0] - '0';
         opts.parity = optarg[1];
         opts.stopbits = optarg[2] - '0';
