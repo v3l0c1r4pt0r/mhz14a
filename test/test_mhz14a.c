@@ -38,9 +38,28 @@ char *span_argv[] = {
   "-s", "65535"
 };
 
+char *span_noarg_argv[] = {
+  "./mhz14a",
+  "-s"
+};
+
 char *zero_argv[] = {
   "./mhz14a",
   "-z"
+};
+
+char *multi_argv[] = {
+  "./mhz14a",
+  "-z", "-s", "-r"
+};
+
+char *nocmd_argv[] = {
+  "./mhz14a"
+};
+
+char *wrongopt_argv[] = {
+  "./mhz14a",
+  "-#"
 };
 
 char *wrong_mode_argv1[] = {
@@ -139,6 +158,16 @@ static void test_main_span(void **state)
   assert_int_equal(expected, actual);
 }
 
+static void test_main_span_noarg(void **state)
+{
+  int expected = RET_UNPARSED;
+  int actual;
+
+  actual = __real_main(sizeof(span_noarg_argv)/sizeof(char*), span_noarg_argv);
+
+  assert_int_equal(expected, actual);
+}
+
 static void test_main_zero(void **state)
 {
   int expected = RET_SUCCESS;
@@ -156,6 +185,36 @@ static void test_main_zero(void **state)
   will_return(__wrap_process_command, 0);
 
   actual = __real_main(sizeof(zero_argv)/sizeof(char*), zero_argv);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_main_multi(void **state)
+{
+  int expected = RET_CMD_DUPL;
+  int actual;
+
+  actual = __real_main(sizeof(multi_argv)/sizeof(char*), multi_argv);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_main_nocmd(void **state)
+{
+  int expected = RET_NOCMD;
+  int actual;
+
+  actual = __real_main(sizeof(nocmd_argv)/sizeof(char*), nocmd_argv);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_main_wrongopt(void **state)
+{
+  int expected = RET_UNPARSED;
+  int actual;
+
+  actual = __real_main(sizeof(wrongopt_argv)/sizeof(char*), wrongopt_argv);
 
   assert_int_equal(expected, actual);
 }
@@ -180,7 +239,11 @@ int main()
   const struct CMUnitTest tests[] = {
     cmocka_unit_test(test_main_read),
     cmocka_unit_test(test_main_span),
+    cmocka_unit_test(test_main_span_noarg),
     cmocka_unit_test(test_main_zero),
+    cmocka_unit_test(test_main_multi),
+    cmocka_unit_test(test_main_nocmd),
+    cmocka_unit_test(test_main_wrongopt),
     cmocka_unit_test(test_main_wrong_mode1),
     cmocka_unit_test(test_main_wrong_mode2),
     cmocka_unit_test(test_main_wrong_mode3),
