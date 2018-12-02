@@ -33,6 +33,16 @@ char *read_argv[] = {
   "-r"
 };
 
+char *span_argv[] = {
+  "./mhz14a",
+  "-s", "65535"
+};
+
+char *zero_argv[] = {
+  "./mhz14a",
+  "-z"
+};
+
 char *wrong_mode_argv1[] = {
   "./mhz14a",
   "-m", "an1"
@@ -108,6 +118,48 @@ static void test_main_read(void **state)
   assert_int_equal(expected, actual);
 }
 
+static void test_main_span(void **state)
+{
+  int expected = RET_SUCCESS;
+  int actual;
+
+  expect_value(__wrap_process_command, device, NULL);
+  expect_value(__wrap_process_command, baudrate, 9600);
+  expect_value(__wrap_process_command, databits, 8);
+  expect_value(__wrap_process_command, parity, 'N');
+  expect_value(__wrap_process_command, stopbits, 1);
+  expect_value(__wrap_process_command, command, CMD_CALIBRATE_SPAN);
+  expect_value(__wrap_process_command, gas_concentration, 0);
+  expect_value(__wrap_process_command, span_point, 65535);
+
+  will_return(__wrap_process_command, 0);
+
+  actual = __real_main(sizeof(span_argv)/sizeof(char*), span_argv);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_main_zero(void **state)
+{
+  int expected = RET_SUCCESS;
+  int actual;
+
+  expect_value(__wrap_process_command, device, NULL);
+  expect_value(__wrap_process_command, baudrate, 9600);
+  expect_value(__wrap_process_command, databits, 8);
+  expect_value(__wrap_process_command, parity, 'N');
+  expect_value(__wrap_process_command, stopbits, 1);
+  expect_value(__wrap_process_command, command, CMD_CALIBRATE_ZERO);
+  expect_value(__wrap_process_command, gas_concentration, 0);
+  expect_value(__wrap_process_command, span_point, 0);
+
+  will_return(__wrap_process_command, 0);
+
+  actual = __real_main(sizeof(zero_argv)/sizeof(char*), zero_argv);
+
+  assert_int_equal(expected, actual);
+}
+
 #define test_main_wrong_mode(num) static void test_main_wrong_mode##num(void **state) \
 { \
   int expected = RET_MODE_ERR; \
@@ -127,6 +179,8 @@ int main()
 {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test(test_main_read),
+    cmocka_unit_test(test_main_span),
+    cmocka_unit_test(test_main_zero),
     cmocka_unit_test(test_main_wrong_mode1),
     cmocka_unit_test(test_main_wrong_mode2),
     cmocka_unit_test(test_main_wrong_mode3),
