@@ -25,6 +25,26 @@
 #include "mh.h"
 #include "config.h"
 
+void help(char usage)
+{
+  printf("Usage: %s [-b BAUD] [-m DPS] [-d FILE] [-r | -z | -s SPAN] | -v | -h\n");
+  if (!usage)
+  {
+    printf("\n"
+        "  -r, --read          read sensor data\n"
+        "  -z, --zero          calibrate zero point\n"
+        "  -s, --span=SPAN     calibrate span point at SPAN\n"
+        "  -b, --baud=BAUDRATE set baudrate to BAUDRATE (default: 9600)\n"
+        "  -m, --mode=DPS      set mode to D-databits, P-parity and S-stopbits\n"
+        "                      (default: 8N1)\n"
+        "  -d, --dev=DEVICE    set device at which sensor can be found\n"
+        "                      (default: /dev/ttyS0)\n"
+        "  -v, --version       print version of the program and exit\n"
+        "  -h, --help          print this help information and exit\n"
+        "\n");
+  }
+}
+
 int main(int argc, char **argv)
 {
   int c;
@@ -154,7 +174,7 @@ int main(int argc, char **argv)
 
       case 'h':
         /* --help */
-        printf("Usage: %s -b BAUD | -v | -h\n");
+        help(0);
         return RET_SUCCESS;
 
       case '?':
