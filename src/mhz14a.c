@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 
       case '?':
         /* -* not in optstring */
-        break;
+        return RET_UNPARSED;
 
       default:
         /* optstrings not handled (mistakes?) */
