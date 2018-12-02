@@ -115,17 +115,35 @@ int main(int argc, char **argv)
 
       case 'r':
         /* --read */
+        if (opts.command != 0)
+        {
+          printf("Error: more than one command given\n");
+          return RET_CMD_DUPL;
+        }
+
         opts.command = CMD_GAS_CONCENTRATION;
         break;
 
       case 's':
         /* --span=SPANPOINT */
+        if (opts.command != 0)
+        {
+          printf("Error: more than one command given\n");
+          return RET_CMD_DUPL;
+        }
+
         opts.command = CMD_CALIBRATE_SPAN;
         opts.span_point = atol(optarg);
         break;
 
       case 'z':
         /* --zero */
+        if (opts.command != 0)
+        {
+          printf("Error: more than one command given\n");
+          return RET_CMD_DUPL;
+        }
+
         opts.command = CMD_CALIBRATE_ZERO;
         break;
 
@@ -153,6 +171,13 @@ int main(int argc, char **argv)
   if (optind < argc) {
     printf("Error: too many arguments provided!\n");
     return RET_UNPARSED;
+  }
+
+  /* check if command was already given */
+  if (opts.command == 0)
+  {
+    printf("Error: no command given\n");
+    return RET_NOCMD;
   }
 
   result = process_command(&opts);
