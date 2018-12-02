@@ -19,6 +19,8 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
+#include "mhz14a.h"
+
 #define main __real_main
 #include "mhz14a.c"
 #undef main
@@ -87,7 +89,7 @@ int __wrap_process_command (mhopt_t *opts)
 
 static void test_main_read(void **state)
 {
-  int expected = 0;
+  int expected = RET_SUCCESS;
   int actual;
 
   expect_string(__wrap_process_command, device, "/dev/ttyS0");
@@ -108,7 +110,7 @@ static void test_main_read(void **state)
 
 #define test_main_wrong_mode(num) static void test_main_wrong_mode##num(void **state) \
 { \
-  int expected = 1; \
+  int expected = RET_MODE_ERR; \
   int actual; \
  \
   actual = __real_main(sizeof(wrong_mode_argv##num)/sizeof(char*), wrong_mode_argv##num); \

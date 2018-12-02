@@ -20,6 +20,7 @@
 #include <getopt.h>
 #include <ctype.h>
 
+#include "mhz14a.h"
 #include "mh_uart.h"
 #include "mh.h"
 #include "config.h"
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
             !isdigit(optarg[2]))
         {
           printf("Error! Unsupported mode\n");
-          return 1;
+          return RET_MODE_ERR;
         }
 
         opts.databits = optarg[0] - '0';
@@ -131,12 +132,12 @@ int main(int argc, char **argv)
       case 'v':
         /* --version */
         printf("mh-z14a version %s\n", MHZ14A_VERSION);
-        return 0;
+        return RET_SUCCESS;
 
       case 'h':
         /* --help */
         printf("Usage: %s -b BAUD | -v | -h\n");
-        return 0;
+        return RET_SUCCESS;
 
       case '?':
         /* -* not in optstring */
@@ -151,7 +152,7 @@ int main(int argc, char **argv)
   /* positional arguments */
   if (optind < argc) {
     printf("Error: too many arguments provided!\n");
-    return 1;
+    return RET_UNPARSED;
   }
 
   result = process_command(&opts);
@@ -170,7 +171,7 @@ int main(int argc, char **argv)
         return 42;
       default:
         printf("Error! Internal error on command %x\n", opts.command);
-        return -1;
+        return RET_INTERNAL;
     }
   }
 
