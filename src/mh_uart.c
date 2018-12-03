@@ -15,6 +15,7 @@
  */
 #include <stddef.h>
 #include <endian.h>
+#include <errno.h>
 
 #include "mh_uart.h"
 
@@ -65,6 +66,22 @@ pkt_t init_calibrate_zero_packet()
   result = *((pkt_t*) &packet);
 
   return result;
+}
+
+uint16_t return_gas_concentration(pkt_t packet)
+{
+  return_gas_t return_packet = *((return_gas_t*) &packet);
+
+  /* verify packet contents */
+  if (return_packet.start != 0xff ||
+      return_packet.command != CMD_GAS_CONCENTRATION ||
+      checksum(&packet) != return_packet.checksum)
+  {
+    errno = EINVAL;
+    return (uint16_t)-1;
+  }
+
+  return be16toh(return_packet.concentration);
 }
 
 uint8_t checksum(pkt_t *packet)
