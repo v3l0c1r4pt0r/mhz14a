@@ -88,7 +88,7 @@ pkt_t init_read_gas_packet();
 /**
  * \brief Create packet for calibrating span point
  *
- * \param span_point Span point to calibrate
+ * \param span_point Span point to calibrate in host endianness
  *
  * \return complete packet
  */
@@ -100,6 +100,15 @@ pkt_t init_calibrate_span_packet(uint16_t span_point);
  * \return complete packet
  */
 pkt_t init_calibrate_zero_packet();
+
+/**
+ * \brief Extract gas concentration from packet
+ *
+ * \param packet return packet of command for reading concentration
+ *
+ * \return gas concentration in host endianness
+ */
+uint16_t return_gas_concentration(pkt_t packet);
 
 /**
  * \brief Compute checksum of a packet
