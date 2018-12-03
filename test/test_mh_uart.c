@@ -98,6 +98,17 @@ static void test_span_packet(void **state)
   assert_memory_equal(expected, &actual, sizeof(pkt_t));
 }
 
+static void test_gas_return(void **state)
+{
+  uint8_t input[] = {0xff, 0x86, 2, 0x60, 0x47, 0, 0, 0, 0xd1};
+  uint16_t expected = 0x260;
+  uint16_t actual;
+
+  actual = return_gas_concentration(*((pkt_t*) input));
+
+  assert_int_equal(expected, actual);
+}
+
 int main()
 {
   const struct CMUnitTest tests[] = {
@@ -113,6 +124,7 @@ int main()
     cmocka_unit_test(test_read_packet),
     cmocka_unit_test(test_zero_packet),
     cmocka_unit_test(test_span_packet),
+    cmocka_unit_test(test_gas_return),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
