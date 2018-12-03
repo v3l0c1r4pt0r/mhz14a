@@ -78,5 +78,35 @@ typedef struct {
   uint8_t checksum;
 } __packed__ return_gas_t;
 
+/**
+ * \brief Create packet for reading gas ready to be sent
+ *
+ * \return complete packet
+ */
+pkt_t init_read_gas_packet();
+
+/**
+ * \brief Create packet for calibrating span point
+ *
+ * \param span_point Span point to calibrate
+ *
+ * \return complete packet
+ */
+pkt_t init_calibrate_span_packet(uint16_t span_point);
+
+/**
+ * \brief Create packet for calibrating zero point
+ *
+ * \return complete packet
+ */
+pkt_t init_calibrate_zero_packet();
+
+/**
+ * \brief Compute checksum of a packet
+ *
+ * \param packet packet of which checksum is computed
+ *
+ * \return checksum
+ */
 uint8_t checksum(pkt_t *packet);
 #endif // MH_UART_H
