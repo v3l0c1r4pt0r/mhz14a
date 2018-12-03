@@ -68,6 +68,36 @@ test_sizeof(calibrate_zero_t);
 test_sizeof(calibrate_span_t);
 test_sizeof(return_gas_t);
 
+static void test_read_packet(void **state)
+{
+  uint8_t expected[] = {0xff, 1, 0x86, 0, 0, 0, 0, 0, 0x79};
+  pkt_t actual;
+
+  actual = init_read_gas_packet();
+
+  assert_memory_equal(expected, &actual, sizeof(pkt_t));
+}
+
+static void test_zero_packet(void **state)
+{
+  uint8_t expected[] = {0xff, 1, 0x87, 0, 0, 0, 0, 0, 0x78};
+  pkt_t actual;
+
+  actual = init_calibrate_zero_packet();
+
+  assert_memory_equal(expected, &actual, sizeof(pkt_t));
+}
+
+static void test_span_packet(void **state)
+{
+  uint8_t expected[] = {0xff, 1, 0x88, 7, 0xd0, 0, 0, 0, 0xa0};
+  pkt_t actual;
+
+  actual = init_calibrate_span_packet(0x7d0);
+
+  assert_memory_equal(expected, &actual, sizeof(pkt_t));
+}
+
 int main()
 {
   const struct CMUnitTest tests[] = {
@@ -80,6 +110,9 @@ int main()
     cmocka_unit_test(test_checksum),
     cmocka_unit_test(test_checksum_overflow),
     cmocka_unit_test(test_checksum_inval_in),
+    cmocka_unit_test(test_read_packet),
+    cmocka_unit_test(test_zero_packet),
+    cmocka_unit_test(test_span_packet),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
