@@ -18,6 +18,15 @@
 
 #include "mh.h"
 
+speedopt_t speeds[] = {
+  speed(0), speed(50), speed(75), speed(110), speed(134), speed(150),
+  speed(200), speed(300), speed(600), speed(1200), speed(1800), speed(2400),
+  speed(4800), speed(9600), speed(19200), speed(38400), speed(57600),
+  speed(115200), speed(230400), speed(460800), speed(500000), speed(576000),
+  speed(921600), speed(1000000), speed(1152000), speed(1500000), speed(2000000),
+  speed(2500000), speed(3000000), speed(3500000), speed(4000000),
+};
+
 speed_t int_to_baud(int baud)
 {
   errno = ENOSYS;

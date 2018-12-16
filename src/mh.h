@@ -21,6 +21,8 @@
 
 #include "mh_uart.h"
 
+#define speed(baudrate) { baudrate, B##baudrate }
+
 typedef struct {
   char *device; /*< filename of UART device */
   int baudrate; /*< baudrate (usually 9600) */
@@ -34,6 +36,11 @@ typedef struct {
   uint16_t span_point; /*< input - span point to set if calibrate span point
                         *  selected */
 } mhopt_t;
+
+typedef struct {
+  int baudrate;
+  speed_t speed;
+} speedopt_t;
 
 int process_command(mhopt_t *opts);
 
