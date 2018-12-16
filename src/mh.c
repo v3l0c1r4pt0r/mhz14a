@@ -89,6 +89,11 @@ int termios_speed(int fd, int baud, direction_t dir)
   return 0;
 }
 
+int termios_params(int fd, uint8_t databits, char parity, uint8_t stopbits)
+{
+  return -1;
+}
+
 int process_command(mhopt_t *opts)
 {
   return -1;

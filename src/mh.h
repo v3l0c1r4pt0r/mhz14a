@@ -73,4 +73,18 @@ speed_t int_to_baud(int baud);
  */
 int termios_speed(int fd, int baud, direction_t dir);
 
+/**
+ * \brief Set terminal parameters
+ *
+ * \param fd file descriptor which parameters will be adjusted
+ * \param databits number of data bits (usually 8)
+ * \param parity meaning of parity bit
+ * \param stopbits number of stop bits (usually 1)
+ *
+ * \return error indicator
+ * \retval 0 success
+ * \retval -1 error occurred
+ */
+int termios_params(int fd, uint8_t databits, char parity, uint8_t stopbits);
+
 #endif // MH_H
