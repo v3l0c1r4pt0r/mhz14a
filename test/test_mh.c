@@ -264,7 +264,42 @@ static void test_termios_invalid_speed(void **state)
   uint8_t expected = -1;
   uint8_t actual;
 
-  actual = termios_speed(1337, -1, DIR_OUTPUT);
+  actual = termios_params(1337, -1, DIR_OUTPUT, 0, '\0', 0);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_termios_wrong_dir(void **state)
+{
+  uint8_t expected = -4;
+  uint8_t actual;
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  actual = termios_params(1337, 9600, DIR_BOTH+1, 0, '\0', 0);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_termios_do_nothing(void **state)
+{
+  uint8_t expected = -2;
+  uint8_t actual;
+
+  actual = termios_params(1337, 0, DIR_UNDEFINED, 0, '\0', 0);
 
   assert_int_equal(expected, actual);
 }
@@ -308,6 +343,8 @@ int main()
     cmocka_unit_test(test_termios_ispeed),
     cmocka_unit_test(test_termios_ospeed),
     cmocka_unit_test(test_termios_invalid_speed),
+    cmocka_unit_test(test_termios_wrong_dir),
+    cmocka_unit_test(test_termios_do_nothing),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
