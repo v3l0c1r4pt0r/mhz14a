@@ -13,17 +13,30 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-#include <errno.h>
-#include <termios.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <setjmp.h>
+#include <cmocka.h>
 
 #include "mh.h"
 
-speed_t int_to_baud(int baud)
+#include "mh.c"
+
+static void test_9600_to_baud(void **state)
 {
-  return -1;
+  speed_t expected = B9600;
+  speed_t actual;
+
+  actual = int_to_baud(9600);
+
+  assert_int_equal(expected, actual);
 }
 
-int process_command(mhopt_t *opts)
+int main()
 {
-  return -1;
+  const struct CMUnitTest tests[] = {
+    cmocka_unit_test(test_9600_to_baud),
+  };
+
+  return cmocka_run_group_tests(tests, NULL, NULL);
 }

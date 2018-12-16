@@ -17,6 +17,7 @@
 #define MH_H
 
 #include <stdint.h>
+#include <termios.h>
 
 #include "mh_uart.h"
 
@@ -35,5 +36,14 @@ typedef struct {
 } mhopt_t;
 
 int process_command(mhopt_t *opts);
+
+/**
+ * \brief Convert baudrate as integer into termios bitfield
+ *
+ * \param baud baudrate as integer number of bauds per second
+ *
+ * \return bitfield under CBAUD mask
+ */
+speed_t int_to_baud(int baud);
 
 #endif // MH_H
