@@ -59,6 +59,18 @@ int process_command(mhopt_t *opts);
  * \return bitfield under CBAUD mask
  */
 speed_t int_to_baud(int baud);
+
+/**
+ * \brief Set baudrate of descriptor
+ *
+ * \param fd file descriptor which speed is to be adjusted
+ * \param baud baudrate as number (only specific values are supported)
+ * \param dir direction at which speed is to be adjusted
+ *
+ * \return success indicator
+ * \retval 0 success
+ * \retval -1 error occurred
+ */
 int termios_speed(int fd, int baud, direction_t dir);
 
 #endif // MH_H
