@@ -17,10 +17,81 @@
 #include <stddef.h>
 #include <setjmp.h>
 #include <cmocka.h>
+#include <string.h>
 
 #include "mh.h"
 
 #include "mh.c"
+
+int __wrap_tcgetattr(int fd, struct termios *termios_p)
+{
+  check_expected(fd);
+  check_expected(termios_p);
+
+  // TODO: fill options
+  termios_p->c_iflag = mock();
+  termios_p->c_oflag = mock();
+  termios_p->c_cflag = mock();
+  termios_p->c_lflag = mock();
+  termios_p->c_line = mock();
+  memcpy(termios_p->c_cc, (void*) mock(), NCCS);
+  termios_p->c_ispeed = mock();
+  termios_p->c_ospeed = mock();
+
+  return mock();
+}
+
+int __wrap_tcsetattr(int fd, int optional_actions,
+    const struct termios *termios_p)
+{
+  tcflag_t c_iflag = termios_p->c_iflag;
+  tcflag_t c_oflag = termios_p->c_oflag;
+  tcflag_t c_cflag = termios_p->c_cflag;
+  tcflag_t c_lflag = termios_p->c_lflag;
+  cc_t c_line = termios_p->c_line;
+  const cc_t *c_cc = termios_p->c_cc;
+  speed_t c_ispeed = termios_p->c_ispeed;
+  speed_t c_ospeed = termios_p->c_ospeed;
+ 
+  check_expected(fd);
+  check_expected(optional_actions);
+  check_expected(termios_p);
+
+  check_expected(c_iflag);
+  check_expected(c_oflag);
+  check_expected(c_cflag);
+  check_expected(c_lflag);
+  check_expected(c_cc);
+  check_expected(c_line);
+  check_expected(c_ispeed);
+  check_expected(c_ospeed);
+
+  return mock();
+}
+
+int __wrap_cfsetispeed(struct termios *termios_p, speed_t speed)
+{
+  check_expected(termios_p);
+  check_expected(speed);
+
+  return mock();
+}
+
+int __wrap_cfsetospeed(struct termios *termios_p, speed_t speed)
+{
+  check_expected(termios_p);
+  check_expected(speed);
+
+  return mock();
+}
+
+int __wrap_cfsetspeed(struct termios *termios_p, speed_t speed)
+{
+  check_expected(termios_p);
+  check_expected(speed);
+
+  return mock();
+}
 
 #define test_x_to_baud(x, speed, err) static void test_to_baud_##x(void **state) \
 { \
@@ -66,6 +137,47 @@ test_x_to_baud(3000000, B3000000, 0);
 test_x_to_baud(3500000, B3500000, 0);
 test_x_to_baud(4000000, B4000000, 0);
 
+static void test_termios_speed(void **state)
+{
+  uint8_t expected = 0;
+  uint8_t actual;
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  expect_value(__wrap_tcsetattr, fd, 1337);
+  expect_value(__wrap_tcsetattr, optional_actions, TCSANOW);
+  expect_not_value(__wrap_tcsetattr, termios_p, NULL);
+  expect_value(__wrap_tcsetattr, c_iflag, IUTF8|IXON|ICRNL);
+  expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
+  expect_value(__wrap_tcsetattr, c_cflag, CLOCAL|HUPCL|CREAD|CS8|B115200);
+  expect_value(__wrap_tcsetattr, c_lflag,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+  expect_value(__wrap_tcsetattr, c_line, 0);
+  expect_string(__wrap_tcsetattr, c_cc,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  expect_value(__wrap_tcsetattr, c_ispeed, B115200);
+  expect_value(__wrap_tcsetattr, c_ospeed, B115200);
+  will_return(__wrap_tcsetattr, 0);
+
+
+  actual = termios_speed(1337, 115200, DIR_BOTH);
+
+  assert_int_equal(expected, actual);
+}
+
 int main()
 {
   const struct CMUnitTest tests[] = {
@@ -101,6 +213,7 @@ int main()
     cmocka_unit_test(test_to_baud_3000000),
     cmocka_unit_test(test_to_baud_3500000),
     cmocka_unit_test(test_to_baud_4000000),
+    cmocka_unit_test(test_termios_speed),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
