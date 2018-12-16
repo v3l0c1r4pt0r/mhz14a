@@ -58,7 +58,7 @@ int int_to_charsize(int databits, tcflag_t *cflags)
   }
 
   /* check if there is opt for given param */
-  if (((uint8_t) databits) > sizeof(databitopts)/sizeof(tcflag_t))
+  if (((uint8_t) databits) >= sizeof(databitopts)/sizeof(tcflag_t))
   {
     return -2;
   }
