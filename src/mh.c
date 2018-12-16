@@ -46,7 +46,8 @@ speed_t int_to_baud(int baud)
   return -1;
 }
 
-int termios_speed(int fd, int baud, direction_t dir)
+int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
+    char parity, uint8_t stopbits)
 {
   int err = 0;
   struct termios options;
@@ -57,10 +58,16 @@ int termios_speed(int fd, int baud, direction_t dir)
     return -1;
   }
 
+  /* check if there is something to do */
+  if (dir == DIR_UNDEFINED && databits == 0 && parity == '\0' && stopbits == 0)
+  {
+    return -2;
+  }
+
   if (err = tcgetattr(fd, &options))
   {
     perror("tcgetattr");
-    return -1;
+    return -3;
   }
 
   switch(dir)
@@ -68,14 +75,15 @@ int termios_speed(int fd, int baud, direction_t dir)
     case DIR_INPUT: err = cfsetispeed(&options, baudbits); break;
     case DIR_OUTPUT: err = cfsetospeed(&options, baudbits); break;
     case DIR_BOTH: err = cfsetspeed(&options, baudbits); break;
+    case DIR_UNDEFINED: /* do not set speed */ break;
     default:
       errno = ENOTSUP;
-      return -2;
+      return -4;
   }
   if (err)
   {
     perror("cfsetspeed");
-    return -3;
+    return -5;
   }
 
   options.c_cflag |= (CLOCAL | CREAD);
@@ -83,15 +91,10 @@ int termios_speed(int fd, int baud, direction_t dir)
   if (err = tcsetattr(fd, TCSANOW, &options))
   {
     perror("tcsetattr");
-    return -4;
+    return -6;
   }
 
   return 0;
-}
-
-int termios_params(int fd, uint8_t databits, char parity, uint8_t stopbits)
-{
-  return -1;
 }
 
 int process_command(mhopt_t *opts)

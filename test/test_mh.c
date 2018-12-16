@@ -173,7 +173,7 @@ static void test_termios_speed(void **state)
   will_return(__wrap_tcsetattr, 0);
 
 
-  actual = termios_speed(1337, 115200, DIR_BOTH);
+  actual = termios_params(1337, 115200, DIR_BOTH, 0, '\0', 0);
 
   assert_int_equal(expected, actual);
 }
@@ -214,7 +214,7 @@ static void test_termios_ispeed(void **state)
   will_return(__wrap_tcsetattr, 0);
 
 
-  actual = termios_speed(1337, 115200, DIR_INPUT);
+  actual = termios_params(1337, 115200, DIR_INPUT, 0, '\0', 0);
 
   assert_int_equal(expected, actual);
 }
@@ -254,8 +254,7 @@ static void test_termios_ospeed(void **state)
   expect_value(__wrap_tcsetattr, c_ospeed, B115200);
   will_return(__wrap_tcsetattr, 0);
 
-
-  actual = termios_speed(1337, 115200, DIR_OUTPUT);
+  actual = termios_params(1337, 115200, DIR_OUTPUT, 0, '\0', 0);
 
   assert_int_equal(expected, actual);
 }
