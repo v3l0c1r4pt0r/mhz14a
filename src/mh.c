@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <errno.h>
 #include <termios.h>
+#include <stdio.h>
 
 #include "mh.h"
 
@@ -43,6 +44,49 @@ speed_t int_to_baud(int baud)
   }
   errno = ENOTSUP;
   return -1;
+}
+
+int termios_speed(int fd, int baud, direction_t dir)
+{
+  int err = 0;
+  struct termios options;
+  speed_t baudbits = int_to_baud(baud);
+  if (baudbits == (speed_t)-1)
+  {
+    perror("int_to_baud");
+    return -1;
+  }
+
+  if (err = tcgetattr(fd, &options))
+  {
+    perror("tcgetattr");
+    return -1;
+  }
+
+  switch(dir)
+  {
+    case DIR_INPUT: err = cfsetispeed(&options, baudbits); break;
+    case DIR_OUTPUT: err = cfsetospeed(&options, baudbits); break;
+    case DIR_BOTH: err = cfsetspeed(&options, baudbits); break;
+    default:
+      errno = ENOTSUP;
+      return -2;
+  }
+  if (err)
+  {
+    perror("cfsetspeed");
+    return -3;
+  }
+
+  options.c_cflag |= (CLOCAL | CREAD);
+
+  if (err = tcsetattr(fd, TCSANOW, &options))
+  {
+    perror("tcsetattr");
+    return -4;
+  }
+
+  return 0;
 }
 
 int process_command(mhopt_t *opts)
