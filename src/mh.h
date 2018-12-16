@@ -37,6 +37,13 @@ typedef struct {
                         *  selected */
 } mhopt_t;
 
+typedef enum {
+  DIR_UNDEFINED = 0,
+  DIR_INPUT,
+  DIR_OUTPUT,
+  DIR_BOTH,
+} direction_t;
+
 typedef struct {
   int baudrate;
   speed_t speed;
@@ -52,5 +59,6 @@ int process_command(mhopt_t *opts);
  * \return bitfield under CBAUD mask
  */
 speed_t int_to_baud(int baud);
+int termios_speed(int fd, int baud, direction_t dir);
 
 #endif // MH_H
