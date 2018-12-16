@@ -29,6 +29,8 @@ speedopt_t speeds[] = {
   speed(2500000), speed(3000000), speed(3500000), speed(4000000),
 };
 
+tcflag_t databitopts[] = {-1, -1, -1, -1, -1, CS5, CS6, CS7, CS8};
+
 speed_t int_to_baud(int baud)
 {
   int i;
@@ -48,7 +50,32 @@ speed_t int_to_baud(int baud)
 
 int int_to_charsize(int databits, tcflag_t *cflags)
 {
-  return -1;
+  tcflag_t bits;
+
+  if (cflags == NULL)
+  {
+    return -1;
+  }
+
+  /* check if there is opt for given param */
+  if (((uint8_t) databits) > sizeof(databitopts)/sizeof(tcflag_t))
+  {
+    return -2;
+  }
+
+  bits = databitopts[databits];
+
+  /* if databitopt is equal -1 it is unsupported, same way as when out of
+   * bounds */
+  if (bits == -1)
+  {
+    return -2;
+  }
+
+  *cflags &= ~CSIZE;
+  *cflags |= bits;
+
+  return 0;
 }
 
 int char_to_parity(char parity, tcflag_t *cflags)
