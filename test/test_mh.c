@@ -138,17 +138,27 @@ test_x_to_baud(3000000, B3000000, 0);
 test_x_to_baud(3500000, B3500000, 0);
 test_x_to_baud(4000000, B4000000, 0);
 
-static void test_termios_databits(void **state)
-{
-  uint8_t expected = 0;
-  uint8_t actual;
-  tcflag_t cflag = UINT_MAX;
-
-  actual = int_to_charsize(7, &cflag);
-
-  assert_int_equal(expected, actual);
-  assert_int_equal(cflag, 0xffffffef);
+#define test_termios_databits(x, result, err) \
+static void test_termios_databits_##x(void **state) \
+{ \
+  int expected = err; \
+  int actual; \
+  tcflag_t cflag = UINT_MAX; \
+ \
+  actual = int_to_charsize(x, &cflag); \
+ \
+  assert_int_equal(expected, actual); \
+  assert_int_equal(cflag, result); \
 }
+
+test_termios_databits(0, UINT_MAX, -2);
+test_termios_databits(4, UINT_MAX, -2);
+test_termios_databits(5, 0xffffffcf, 0);
+test_termios_databits(6, 0xffffffdf, 0);
+test_termios_databits(7, 0xffffffef, 0);
+test_termios_databits(8, 0xffffffff, 0);
+test_termios_databits(9, UINT_MAX, -2);
+test_termios_databits(0xffffffff, UINT_MAX, -2);
 
 static void test_termios_speed(void **state)
 {
@@ -352,7 +362,14 @@ int main()
     cmocka_unit_test(test_to_baud_3000000),
     cmocka_unit_test(test_to_baud_3500000),
     cmocka_unit_test(test_to_baud_4000000),
-    cmocka_unit_test(test_termios_databits),
+    cmocka_unit_test(test_termios_databits_0),
+    cmocka_unit_test(test_termios_databits_4),
+    cmocka_unit_test(test_termios_databits_5),
+    cmocka_unit_test(test_termios_databits_6),
+    cmocka_unit_test(test_termios_databits_7),
+    cmocka_unit_test(test_termios_databits_8),
+    cmocka_unit_test(test_termios_databits_9),
+    cmocka_unit_test(test_termios_databits_0xffffffff),
     cmocka_unit_test(test_termios_speed),
     cmocka_unit_test(test_termios_ispeed),
     cmocka_unit_test(test_termios_ospeed),
