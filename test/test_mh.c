@@ -18,6 +18,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include <string.h>
+#include <limits.h>
 
 #include "mh.h"
 
@@ -136,6 +137,18 @@ test_x_to_baud(2500000, B2500000, 0);
 test_x_to_baud(3000000, B3000000, 0);
 test_x_to_baud(3500000, B3500000, 0);
 test_x_to_baud(4000000, B4000000, 0);
+
+static void test_termios_databits(void **state)
+{
+  uint8_t expected = 0;
+  uint8_t actual;
+  tcflag_t cflag = UINT_MAX;
+
+  actual = int_to_charsize(7, &cflag);
+
+  assert_int_equal(expected, actual);
+  assert_int_equal(cflag, 0xffffffef);
+}
 
 static void test_termios_speed(void **state)
 {
@@ -339,6 +352,7 @@ int main()
     cmocka_unit_test(test_to_baud_3000000),
     cmocka_unit_test(test_to_baud_3500000),
     cmocka_unit_test(test_to_baud_4000000),
+    cmocka_unit_test(test_termios_databits),
     cmocka_unit_test(test_termios_speed),
     cmocka_unit_test(test_termios_ispeed),
     cmocka_unit_test(test_termios_ospeed),
