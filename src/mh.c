@@ -20,6 +20,7 @@
 
 speed_t int_to_baud(int baud)
 {
+  errno = ENOSYS;
   return -1;
 }
 
