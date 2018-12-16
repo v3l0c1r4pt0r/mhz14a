@@ -46,6 +46,21 @@ speed_t int_to_baud(int baud)
   return -1;
 }
 
+int int_to_charsize(int databits, tcflag_t *cflags)
+{
+  return -1;
+}
+
+int char_to_parity(char parity, tcflag_t *cflags)
+{
+  return -1;
+}
+
+int int_to_stopbits(int stopbits, tcflag_t *cflags)
+{
+  return -1;
+}
+
 int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
     char parity, uint8_t stopbits)
 {

@@ -61,6 +61,42 @@ int process_command(mhopt_t *opts);
 speed_t int_to_baud(int baud);
 
 /**
+ * \brief Modify character size in cflags
+ *
+ * \param databits Number of data bits to set
+ * \param cflags pointer to current cflags
+ *
+ * \return success indicator
+ * \retval 0 success
+ * \retval -1 error occurred
+ */
+int int_to_charsize(int databits, tcflag_t *cflags);
+
+/**
+ * \brief Modify parity information in cflags
+ *
+ * \param parity Parity as single character
+ * \param cflags pointer to current cflags
+ *
+ * \return success indicator
+ * \retval 0 success
+ * \retval -1 error occurred
+ */
+int char_to_parity(char parity, tcflag_t *cflags);
+
+/**
+ * \brief Modify number of stop bits in cflags
+ *
+ * \param stopbits Number of stop bits to set
+ * \param cflags pointer to current cflags
+ *
+ * \return success indicator
+ * \retval 0 success
+ * \retval -1 error occurred
+ */
+int int_to_stopbits(int stopbits, tcflag_t *cflags);
+
+/**
  * \brief Set baudrate of descriptor
  *
  * \param fd file descriptor which speed is to be adjusted
