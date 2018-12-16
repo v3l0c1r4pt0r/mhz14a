@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
+#include <stddef.h>
 #include <errno.h>
 #include <termios.h>
 
@@ -29,7 +30,18 @@ speedopt_t speeds[] = {
 
 speed_t int_to_baud(int baud)
 {
-  errno = ENOSYS;
+  int i;
+  speedopt_t *speed = NULL;
+  for (i = 0; i < sizeof(speeds)/sizeof(speedopt_t); i++)
+  {
+    speed = &speeds[i];
+    if (baud == speed->baudrate)
+    {
+      errno = 0;
+      return speed->speed;
+    }
+  }
+  errno = ENOTSUP;
   return -1;
 }
 
