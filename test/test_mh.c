@@ -190,6 +190,33 @@ test_termios_parity(tilde, '~', 0, -2)
 test_termios_parity(NULL, '\0', 0, -2)
 test_termios_parity(ff, '\xff', 0, -2)
 
+#define test_termios_stop(x, resultf, result0, err) \
+static void test_termios_stop_##x(void **state) \
+{ \
+  int expected = err; \
+  int actual; \
+  tcflag_t cflag = UINT_MAX; \
+ \
+  actual = int_to_stopbits(x, &cflag); \
+ \
+  assert_int_equal(expected, actual); \
+  assert_int_equal(cflag, resultf); \
+ \
+  cflag = 0; \
+ \
+  actual = int_to_stopbits(x, &cflag); \
+ \
+  assert_int_equal(expected, actual); \
+  assert_int_equal(cflag, result0); \
+}
+
+test_termios_stop(10, 0xffffffbf, 0, 0)
+test_termios_stop(15, 0xffffffff, 0, -2)
+test_termios_stop(20, 0xffffffff, 0100, 0)
+test_termios_stop(30, 0xffffffff, 0, -2)
+test_termios_stop(0, 0xffffffff, 0, -2)
+test_termios_stop(INT_MAX, 0xffffffff, 0, -2)
+
 static void test_termios_speed(void **state)
 {
   uint8_t expected = 0;
@@ -414,6 +441,12 @@ int main()
     cmocka_unit_test(test_termios_parity_tilde),
     cmocka_unit_test(test_termios_parity_NULL),
     cmocka_unit_test(test_termios_parity_ff),
+    cmocka_unit_test(test_termios_stop_10),
+    cmocka_unit_test(test_termios_stop_15),
+    cmocka_unit_test(test_termios_stop_20),
+    cmocka_unit_test(test_termios_stop_30),
+    cmocka_unit_test(test_termios_stop_0),
+    cmocka_unit_test(test_termios_stop_INT_MAX),
     cmocka_unit_test(test_termios_speed),
     cmocka_unit_test(test_termios_ispeed),
     cmocka_unit_test(test_termios_ospeed),
