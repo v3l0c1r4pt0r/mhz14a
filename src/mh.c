@@ -154,6 +154,7 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
     return -3;
   }
 
+  /* set baudrate for selected direction */
   switch(dir)
   {
     case DIR_INPUT: err = cfsetispeed(&options, baudbits); break;
@@ -170,12 +171,38 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
     return -5;
   }
 
+  /* set data bits */
+  if (databits != 0)
+  {
+    if (err = int_to_charsize(databits, &options.c_cflag))
+    {
+      return -6;
+    }
+  }
+
+  /* set parity */
+  if (parity != '\0')
+  {
+    if (err = char_to_parity(parity, &options.c_cflag))
+    {
+      return -7;
+    }
+  }
+  /* set stop bits */
+  if (stopbits != 0)
+  {
+    if (err = int_to_stopbits(stopbits, &options.c_cflag))
+    {
+      return -8;
+    }
+  }
+
   options.c_cflag |= (CLOCAL | CREAD);
 
   if (err = tcsetattr(fd, TCSANOW, &options))
   {
     perror("tcsetattr");
-    return -6;
+    return -9;
   }
 
   return 0;
