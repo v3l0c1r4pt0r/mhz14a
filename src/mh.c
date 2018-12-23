@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <termios.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include "mh.h"
 
@@ -30,6 +31,13 @@ speedopt_t speeds[] = {
 };
 
 tcflag_t databitopts[] = {-1, -1, -1, -1, -1, CS5, CS6, CS7, CS8};
+
+tcflag_t parityopts[] = {
+  ['N'] = (1<<31),
+  ['E'] = (1<<31)|PARENB,
+  ['O'] = (1<<31)|PARENB|PARODD,
+  ['S'] = (1<<31),
+};
 
 speed_t int_to_baud(int baud)
 {
@@ -80,7 +88,28 @@ int int_to_charsize(int databits, tcflag_t *cflags)
 
 int char_to_parity(char parity, tcflag_t *cflags)
 {
-  return -1;
+  const tcflag_t PARITYBITS = PARENB|PARODD;
+
+  if (cflags == NULL)
+  {
+    return -1;
+  }
+
+  if (islower(parity))
+  {
+    parity = toupper(parity);
+  }
+
+  if ((parityopts[parity] & (1<<31)) == 0)
+  {
+    /* unsupported */
+    return -2;
+  }
+
+  *cflags &= ~PARITYBITS;
+  *cflags |= parityopts[parity] & PARITYBITS;
+
+  return 0;
 }
 
 int int_to_stopbits(int stopbits, tcflag_t *cflags)
