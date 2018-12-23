@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     .baudrate = 9600,
     .databits = 8,
     .parity = 'N',
-    .stopbits = 1,
+    .stopbits = 10,
     .command = 0,
     .gas_concentration = 0,
     .span_point = 0
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 
         opts.databits = optarg[0] - '0';
         opts.parity = optarg[1];
-        opts.stopbits = optarg[2] - '0';
+        opts.stopbits = (optarg[2] - '0') * 10; // TODO: scanf to float
 
         break;
 
