@@ -160,6 +160,36 @@ test_termios_databits(8, 0xffffffff, 0);
 test_termios_databits(9, UINT_MAX, -2);
 test_termios_databits(0xffffffff, UINT_MAX, -2);
 
+#define test_termios_parity(x, xchar, result, err) \
+static void test_termios_parity_##x(void **state) \
+{ \
+  int expected = err; \
+  int actual; \
+  tcflag_t cflag = 0; \
+ \
+  actual = char_to_parity(xchar, &cflag); \
+ \
+  assert_int_equal(expected, actual); \
+  assert_int_equal(cflag, result); \
+}
+
+test_termios_parity(N, 'N', 0, 0)
+test_termios_parity(E, 'E', 0400, 0)
+test_termios_parity(O, 'O', 01400, 0)
+test_termios_parity(M, 'M', 0, -2)
+test_termios_parity(S, 'S', 0, 0)
+
+test_termios_parity(n, 'n', 0, 0)
+test_termios_parity(e, 'e', 0400, 0)
+test_termios_parity(o, 'o', 01400, 0)
+test_termios_parity(m, 'm', 0, -2)
+test_termios_parity(s, 's', 0, 0)
+
+test_termios_parity(u, 'u', 0, -2)
+test_termios_parity(tilde, '~', 0, -2)
+test_termios_parity(NULL, '\0', 0, -2)
+test_termios_parity(ff, '\xff', 0, -2)
+
 static void test_termios_speed(void **state)
 {
   uint8_t expected = 0;
@@ -370,6 +400,20 @@ int main()
     cmocka_unit_test(test_termios_databits_8),
     cmocka_unit_test(test_termios_databits_9),
     cmocka_unit_test(test_termios_databits_0xffffffff),
+    cmocka_unit_test(test_termios_parity_N),
+    cmocka_unit_test(test_termios_parity_E),
+    cmocka_unit_test(test_termios_parity_O),
+    cmocka_unit_test(test_termios_parity_M),
+    cmocka_unit_test(test_termios_parity_S),
+    cmocka_unit_test(test_termios_parity_n),
+    cmocka_unit_test(test_termios_parity_e),
+    cmocka_unit_test(test_termios_parity_o),
+    cmocka_unit_test(test_termios_parity_m),
+    cmocka_unit_test(test_termios_parity_s),
+    cmocka_unit_test(test_termios_parity_u),
+    cmocka_unit_test(test_termios_parity_tilde),
+    cmocka_unit_test(test_termios_parity_NULL),
+    cmocka_unit_test(test_termios_parity_ff),
     cmocka_unit_test(test_termios_speed),
     cmocka_unit_test(test_termios_ispeed),
     cmocka_unit_test(test_termios_ospeed),
