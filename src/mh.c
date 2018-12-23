@@ -247,7 +247,10 @@ int process_command(mhopt_t *opts)
       }
 
       /* read response */
-      bytes = read(fd, &packet, sizeof(packet));
+      if ((bytes = read(fd, &packet, sizeof(packet))) == -1)
+      {
+        perror("read");
+      }
       if (bytes != sizeof(packet))
       {
         /* not implemented */
