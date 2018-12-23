@@ -102,6 +102,13 @@ int __wrap_open(const char *pathname, int flags)
   return mock();
 }
 
+int __wrap_close(int fd)
+{
+  check_expected(fd);
+
+  return mock();
+}
+
 ssize_t __wrap_write(int fd, const void *buf, size_t count)
 {
   check_expected(fd);
@@ -553,6 +560,9 @@ static void test_process_command(void **state)
   expect_any(__wrap_read, buf);
   will_return(__wrap_read, "\xff\x86\x02\x60\x47\0\0\0\xd1");
   will_return(__wrap_read, 9);
+
+  expect_value(__wrap_close, fd, 1337);
+  will_return(__wrap_close, 0);
 
   actual = process_command(&opts);
 

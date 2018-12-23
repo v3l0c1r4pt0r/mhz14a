@@ -231,7 +231,7 @@ int process_command(mhopt_t *opts)
         opts->parity,
         opts->stopbits))
   {
-    return -2;
+    err = -2; goto error;
   }
 
   switch (opts->command)
@@ -243,7 +243,7 @@ int process_command(mhopt_t *opts)
       if (bytes != sizeof(packet))
       {
         /* not implemented */
-        return -100;
+        err = -100; goto error;
       }
 
       /* read response */
@@ -251,14 +251,17 @@ int process_command(mhopt_t *opts)
       if (bytes != sizeof(packet))
       {
         /* not implemented */
-        return -101;
+        err = -101; goto error;
       }
       opts->gas_concentration = return_gas_concentration(packet);
       break;
     default:
-      close(fd);
-      return -3;
+        err = -3; goto error;
   }
 
+  close(fd);
   return 0;
+error:
+  close(fd);
+  return err;
 }
