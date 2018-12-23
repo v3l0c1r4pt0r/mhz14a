@@ -28,7 +28,7 @@ typedef struct {
   int baudrate; /*< baudrate (usually 9600) */
   uint8_t databits; /*< number of data bits (usually 8) */
   uint8_t parity; /*< parity bit (usually no parity) */
-  uint8_t stopbits; /*< number of stop bits (usually 1) */
+  uint8_t stopbits; /*< number of stop bits x10 (usually 10) */
   command_t command; /*< command to execute on sensor (depending on command
                       *  parameter has to be filled) */
   uint16_t gas_concentration; /*< output - gas concentration if read command
@@ -87,7 +87,7 @@ int char_to_parity(char parity, tcflag_t *cflags);
 /**
  * \brief Modify number of stop bits in cflags
  *
- * \param stopbits Number of stop bits to set
+ * \param stopbits Number of stop bits to set (multiplied by 10)
  * \param cflags pointer to current cflags
  *
  * \return success indicator
