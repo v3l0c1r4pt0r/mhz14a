@@ -384,6 +384,88 @@ static void test_termios_do_nothing(void **state)
   assert_int_equal(expected, actual);
 }
 
+static void test_termios_params(void **state)
+{
+  uint8_t expected = 0;
+  uint8_t actual;
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  expect_value(__wrap_tcsetattr, fd, 1337);
+  expect_value(__wrap_tcsetattr, optional_actions, TCSANOW);
+  expect_not_value(__wrap_tcsetattr, termios_p, NULL);
+  expect_value(__wrap_tcsetattr, c_iflag, IUTF8|IXON|ICRNL);
+  expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
+  expect_value(__wrap_tcsetattr, c_cflag,
+      CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B38400);
+  expect_value(__wrap_tcsetattr, c_lflag,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+  expect_value(__wrap_tcsetattr, c_line, 0);
+  expect_string(__wrap_tcsetattr, c_cc,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  expect_value(__wrap_tcsetattr, c_ispeed, B9600);
+  expect_value(__wrap_tcsetattr, c_ospeed, B9600);
+  will_return(__wrap_tcsetattr, 0);
+
+  actual = termios_params(1337, 0, DIR_UNDEFINED, 7, 'O', 20);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_termios_full(void **state)
+{
+  uint8_t expected = 0;
+  uint8_t actual;
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  expect_value(__wrap_tcsetattr, fd, 1337);
+  expect_value(__wrap_tcsetattr, optional_actions, TCSANOW);
+  expect_not_value(__wrap_tcsetattr, termios_p, NULL);
+  expect_value(__wrap_tcsetattr, c_iflag, IUTF8|IXON|ICRNL);
+  expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
+  expect_value(__wrap_tcsetattr, c_cflag,
+      CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
+  expect_value(__wrap_tcsetattr, c_lflag,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+  expect_value(__wrap_tcsetattr, c_line, 0);
+  expect_string(__wrap_tcsetattr, c_cc,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  expect_value(__wrap_tcsetattr, c_ispeed, B115200);
+  expect_value(__wrap_tcsetattr, c_ospeed, B115200);
+  will_return(__wrap_tcsetattr, 0);
+
+  actual = termios_params(1337, 115200, DIR_BOTH, 7, 'O', 20);
+
+  assert_int_equal(expected, actual);
+}
+
 int main()
 {
   const struct CMUnitTest tests[] = {
@@ -453,6 +535,8 @@ int main()
     cmocka_unit_test(test_termios_invalid_speed),
     cmocka_unit_test(test_termios_wrong_dir),
     cmocka_unit_test(test_termios_do_nothing),
+    cmocka_unit_test(test_termios_params),
+    cmocka_unit_test(test_termios_full),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
