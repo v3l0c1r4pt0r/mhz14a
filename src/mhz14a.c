@@ -25,9 +25,10 @@
 #include "mh.h"
 #include "config.h"
 
-void help(char usage)
+void help(char usage, char *progname)
 {
-  printf("Usage: %s [-b BAUD] [-m DPS] [-d FILE] [-r | -z | -s SPAN] | -v | -h\n");
+  printf("Usage: %s [-b BAUD] [-m DPS] [-d FILE] [-r | -z | -s SPAN] | -v | -h\n",
+      progname);
   if (!usage)
   {
     printf("\n"
@@ -174,7 +175,7 @@ int main(int argc, char **argv)
 
       case 'h':
         /* --help */
-        help(0);
+        help(0, argv[0]);
         return RET_SUCCESS;
 
       case '?':
