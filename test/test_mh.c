@@ -94,6 +94,36 @@ int __wrap_cfsetspeed(struct termios *termios_p, speed_t speed)
   return mock();
 }
 
+int __wrap_open(const char *pathname, int flags)
+{
+  check_expected(pathname);
+  check_expected(flags);
+
+  return mock();
+}
+
+ssize_t __wrap_write(int fd, const void *buf, size_t count)
+{
+  check_expected(fd);
+  check_expected(buf);
+//check_expected(count);
+
+  return mock();
+}
+
+ssize_t __wrap_read(int fd, void *buf, size_t count)
+{
+  void *src = (void*) mock();
+  size_t src_len = mock();
+  check_expected(fd);
+  check_expected(buf);
+//check_expected(count);
+
+  memcpy(buf, src, src_len);
+
+  return src_len;
+}
+
 #define test_x_to_baud(x, speed, err) static void test_to_baud_##x(void **state) \
 { \
   speed_t expected = speed; \
@@ -466,6 +496,70 @@ static void test_termios_full(void **state)
   assert_int_equal(expected, actual);
 }
 
+static void test_process_command(void **state)
+{
+  mhopt_t opts = {
+    .device = "/dev/ttyS1",
+    .baudrate = 115200,
+    .databits = 7,
+    .parity = 'O',
+    .stopbits = 20,
+    .command = CMD_GAS_CONCENTRATION,
+  };
+  uint8_t expected = 0;
+  uint8_t actual;
+
+  expect_string(__wrap_open, pathname, "/dev/ttyS1");
+  expect_any(__wrap_open, flags);
+  will_return(__wrap_open, 1337);
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  expect_value(__wrap_tcsetattr, fd, 1337);
+  expect_value(__wrap_tcsetattr, optional_actions, TCSANOW);
+  expect_not_value(__wrap_tcsetattr, termios_p, NULL);
+  expect_value(__wrap_tcsetattr, c_iflag, IUTF8|IXON|ICRNL);
+  expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
+  expect_value(__wrap_tcsetattr, c_cflag,
+      CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
+  expect_value(__wrap_tcsetattr, c_lflag,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+  expect_value(__wrap_tcsetattr, c_line, 0);
+  expect_string(__wrap_tcsetattr, c_cc,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  expect_value(__wrap_tcsetattr, c_ispeed, B115200);
+  expect_value(__wrap_tcsetattr, c_ospeed, B115200);
+  will_return(__wrap_tcsetattr, 0);
+
+  expect_value(__wrap_write, fd, 1337);
+  expect_memory(__wrap_write, buf,
+      "\xff\x01\x86\0\0\0\0\0\x79", 9);
+  will_return(__wrap_write, 9); // TODO: test less than 9
+
+  expect_value(__wrap_read, fd, 1337);
+  expect_any(__wrap_read, buf);
+  will_return(__wrap_read, "\xff\x86\x02\x60\x47\0\0\0\xd1");
+  will_return(__wrap_read, 9);
+
+  actual = process_command(&opts);
+
+  assert_int_equal(expected, actual);
+  assert_int_equal(0x260, opts.gas_concentration);
+}
+
 int main()
 {
   const struct CMUnitTest tests[] = {
@@ -537,6 +631,7 @@ int main()
     cmocka_unit_test(test_termios_do_nothing),
     cmocka_unit_test(test_termios_params),
     cmocka_unit_test(test_termios_full),
+    cmocka_unit_test(test_process_command),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
