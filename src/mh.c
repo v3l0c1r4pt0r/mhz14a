@@ -18,6 +18,8 @@
 #include <termios.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "mh.h"
 
@@ -210,5 +212,53 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
 
 int process_command(mhopt_t *opts)
 {
-  return -1;
+  int err = 0;
+  int fd = -1;
+  pkt_t packet;
+  size_t bytes = 0;
+
+  if ((fd = open(opts->device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
+  {
+    perror("open");
+    return -1;
+  }
+
+  if (err = termios_params(
+        fd, /* file descriptor */
+        opts->baudrate,
+        DIR_BOTH, /* direction */
+        opts->databits,
+        opts->parity,
+        opts->stopbits))
+  {
+    return -2;
+  }
+
+  switch (opts->command)
+  {
+    case CMD_GAS_CONCENTRATION:
+      /* write request */
+      packet = init_read_gas_packet();
+      bytes = write(fd, &packet, sizeof(packet));
+      if (bytes != sizeof(packet))
+      {
+        /* not implemented */
+        return -100;
+      }
+
+      /* read response */
+      bytes = read(fd, &packet, sizeof(packet));
+      if (bytes != sizeof(packet))
+      {
+        /* not implemented */
+        return -101;
+      }
+      opts->gas_concentration = return_gas_concentration(packet);
+      break;
+    default:
+      close(fd);
+      return -3;
+  }
+
+  return 0;
 }
