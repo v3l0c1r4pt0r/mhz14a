@@ -114,7 +114,20 @@ int char_to_parity(char parity, tcflag_t *cflags)
 
 int int_to_stopbits(int stopbits, tcflag_t *cflags)
 {
-  return -1;
+  if (cflags == NULL)
+  {
+    return -1;
+  }
+
+  switch (stopbits)
+  {
+    case 10: *cflags &= ~CSTOPB; break;
+    case 20: *cflags |= CSTOPB; break;
+    default:
+      return -2;
+  }
+
+  return 0;
 }
 
 int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
