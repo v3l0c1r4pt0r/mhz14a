@@ -204,13 +204,15 @@ int main(int argc, char **argv)
   result = process_command(&opts);
   if (result != 0)
   {
-    printf("Error! Execution returned %x\n", result);
+    printf("Error! Execution returned %d\n", result);
   }
   else
   {
     switch (opts.command)
     {
       case CMD_GAS_CONCENTRATION:
+        printf("%d\n", opts.gas_concentration);
+        break;
       case CMD_CALIBRATE_SPAN:
       case CMD_CALIBRATE_ZERO:
         printf("Error! Not implemented\n");
