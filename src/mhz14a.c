@@ -32,7 +32,7 @@ void help(char usage, char *progname)
   if (!usage)
   {
     printf("\n"
-        "  -r, --read          read sensor data\n"
+        "  -r, --read          read sensor data[ppm]\n"
         "  -z, --zero          calibrate zero point\n"
         "  -s, --span=SPAN     calibrate span point at SPAN\n"
         "  -b, --baud=BAUDRATE set baudrate to BAUDRATE (default: 9600)\n"
