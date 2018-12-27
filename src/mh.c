@@ -200,6 +200,7 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
   }
 
   options.c_cflag |= (CLOCAL | CREAD);
+  options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 
   if (err = tcsetattr(fd, TCSANOW, &options))
   {

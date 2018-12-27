@@ -295,7 +295,7 @@ static void test_termios_speed(void **state)
   expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
   expect_value(__wrap_tcsetattr, c_cflag, CLOCAL|HUPCL|CREAD|CS8|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -336,7 +336,7 @@ static void test_termios_ispeed(void **state)
   expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
   expect_value(__wrap_tcsetattr, c_cflag, CLOCAL|HUPCL|CREAD|CS8|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -377,7 +377,7 @@ static void test_termios_ospeed(void **state)
   expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
   expect_value(__wrap_tcsetattr, c_cflag, CLOCAL|HUPCL|CREAD|CS8|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -463,7 +463,7 @@ static void test_termios_params(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B38400);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -504,7 +504,7 @@ static void test_termios_full(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -557,7 +557,7 @@ static void test_process_command(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -624,7 +624,7 @@ static void test_process_command_write_again(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -696,7 +696,7 @@ static void test_process_command_read_again(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -768,7 +768,7 @@ static void test_process_command_write_intr(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -839,7 +839,7 @@ static void test_process_command_read_intr(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -910,7 +910,7 @@ static void test_process_command_write_error(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -976,7 +976,7 @@ static void test_process_command_read_error(void **state)
   expect_value(__wrap_tcsetattr, c_cflag,
       CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
   expect_value(__wrap_tcsetattr, c_lflag,
-      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG);
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
   expect_value(__wrap_tcsetattr, c_line, 0);
   expect_string(__wrap_tcsetattr, c_cc,
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
