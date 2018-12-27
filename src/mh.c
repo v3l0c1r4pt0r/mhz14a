@@ -217,6 +217,7 @@ int process_command(mhopt_t *opts)
   pkt_t packet;
   size_t left = 0;
   size_t processed = 0;
+  uint16_t result = (uint16_t)-1;
 
   if ((fd = open(opts->device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
   {
@@ -272,10 +273,16 @@ int process_command(mhopt_t *opts)
         }
         left -= processed;
       }
-      opts->gas_concentration = return_gas_concentration(packet);
+      result = return_gas_concentration(packet);
+      if (result == (uint16_t)-1)
+      {
+        perror("return_gas_concentration");
+        err = -5; goto error;
+      }
+      opts->gas_concentration = result;
       break;
     default:
-        err = -5; goto error;
+        err = -6; goto error;
   }
 
   close(fd);
