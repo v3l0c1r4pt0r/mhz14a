@@ -111,11 +111,18 @@ int __wrap_close(int fd)
 
 ssize_t __wrap_write(int fd, const void *buf, size_t count)
 {
+  size_t len = mock();
+
   check_expected(fd);
   check_expected(buf);
 //check_expected(count);
 
-  return mock();
+  if (len == -1)
+  {
+    errno = mock();
+  }
+
+  return len;
 }
 
 ssize_t __wrap_read(int fd, void *buf, size_t count)
@@ -126,7 +133,14 @@ ssize_t __wrap_read(int fd, void *buf, size_t count)
   check_expected(buf);
 //check_expected(count);
 
-  memcpy(buf, src, src_len);
+  if (src_len != -1)
+  {
+    memcpy(buf, src, src_len);
+  }
+  else
+  {
+    errno = mock();
+  }
 
   return src_len;
 }
