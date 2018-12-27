@@ -215,7 +215,8 @@ int process_command(mhopt_t *opts)
   int err = 0;
   int fd = -1;
   pkt_t packet;
-  size_t bytes = 0;
+  size_t left = 0;
+  size_t processed = 0;
 
   if ((fd = open(opts->device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
   {
@@ -239,27 +240,42 @@ int process_command(mhopt_t *opts)
     case CMD_GAS_CONCENTRATION:
       /* write request */
       packet = init_read_gas_packet();
-      bytes = write(fd, &packet, sizeof(packet));
-      if (bytes != sizeof(packet))
+      left = sizeof(packet);
+      while (left > 0)
       {
-        /* not implemented */
-        err = -100; goto error;
+        processed = write(fd, ((void*) &packet) + sizeof(packet) - left, left);
+        if (processed == -1)
+        {
+          if (errno == EAGAIN)
+          {
+            continue;
+          }
+          perror("write");
+          err = -3; goto error;
+        }
+        left -= processed;
       }
 
       /* read response */
-      if ((bytes = read(fd, &packet, sizeof(packet))) == -1)
+      left = sizeof(packet);
+      while (left > 0)
       {
-        perror("read");
-      }
-      if (bytes != sizeof(packet))
-      {
-        /* not implemented */
-        err = -101; goto error;
+        processed = read(fd, ((void*) &packet) + sizeof(packet) - left, left);
+        if (processed == -1)
+        {
+          if (errno == EAGAIN)
+          {
+            continue;
+          }
+          perror("read");
+          err = -4; goto error;
+        }
+        left -= processed;
       }
       opts->gas_concentration = return_gas_concentration(packet);
       break;
     default:
-        err = -3; goto error;
+        err = -5; goto error;
   }
 
   close(fd);
