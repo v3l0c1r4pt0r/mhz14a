@@ -16,13 +16,31 @@
 #ifndef MHZ14A_H
 #define MHZ14A_H
 
+#define LEVELOPT(name) {.value = LEVEL_##name, .text = #name}
+
 typedef enum {
   RET_SUCCESS = 0,
   RET_NOCMD,
   RET_CMD_DUPL,
   RET_MODE_ERR,
+  RET_ARG,
   RET_UNPARSED,
   RET_INTERNAL = 255
 } result_t;
+
+typedef enum {
+  LEVEL_ERROR = 0, /**< This is default setting */
+  LEVEL_WARNING,
+  LEVEL_INFO,
+  LEVEL_DEBUG,
+  LEVEL_MAX, /**< This is pseudo level - do not use */
+} level_t;
+
+typedef struct {
+  level_t value;
+  char *text;
+} levelopt_t;
+
+extern level_t log_level;
 
 #endif // MHZ14A_H

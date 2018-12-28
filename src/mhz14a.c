@@ -25,6 +25,14 @@
 #include "mh.h"
 #include "config.h"
 
+#define OPT_LOG (CHAR_MAX + 1)
+
+levelopt_t levelopts[] = {
+  LEVELOPT(ERROR), LEVELOPT(WARNING), LEVELOPT(INFO), LEVELOPT(DEBUG)
+};
+
+level_t log_level = LEVEL_ERROR;
+
 void help(char usage, char *progname)
 {
   printf("Usage: %s [-b BAUD] [-m DPS] [-d FILE] [-r | -z | -s SPAN] | -v | -h\n",
@@ -40,6 +48,9 @@ void help(char usage, char *progname)
         "                      (default: 8N1)\n"
         "  -d, --dev=DEVICE    set device at which sensor can be found\n"
         "                      (default: /dev/ttyS0)\n"
+        "      --log=LEVEL     set logging verbosity to LEVEL (default: 0 - error)\n"
+        "                      One of the following is allowed (either number or text):\n"
+        "                        0/ERROR; 1/WARNING; 2/INFO; 3/DEBUG\n"
         "  -v, --version       print version of the program and exit\n"
         "  -h, --help          print this help information and exit\n"
         "\n");
@@ -63,6 +74,7 @@ int main(int argc, char **argv)
     .span_point = 0
   };
   int result;
+  int i;
 
   while (1) {
     int this_option_optind = optind ? optind : 1;
@@ -78,6 +90,7 @@ int main(int argc, char **argv)
       {"zero", no_argument, 0, 'z' },
       {"span", required_argument, 0, 's' },
       /* general */
+      {"log", required_argument, 0, OPT_LOG },
       {"version", no_argument, 0, 'v' },
       {"help", no_argument, 0, 'h' },
       {0, 0, 0, 0 }
@@ -166,6 +179,41 @@ int main(int argc, char **argv)
         }
 
         opts.command = CMD_CALIBRATE_ZERO;
+        break;
+
+      case OPT_LOG:
+        /* --log */
+        if (isdigit(optarg[0]))
+        {
+          log_level = atol(optarg);
+          if (log_level < LEVEL_MAX)
+          {
+            printf("Info: log level set to %d\n", log_level);
+          }
+          else
+          {
+            printf("Error: unknown log level: %d\n", log_level);
+            return RET_ARG;
+          }
+        }
+        else
+        {
+          log_level = LEVEL_MAX;
+          for (i = 0; i < LEVEL_MAX; i++)
+          {
+            if (strcmp(levelopts[i].text, optarg) == 0)
+            {
+              log_level = i;
+              printf("Info: log level set to %d - %s\n", i, optarg);
+              break;
+            }
+          }
+          if (log_level == LEVEL_MAX)
+          {
+            printf("Error: unknown log level: %s\n", optarg);
+            return RET_ARG;
+          }
+        }
         break;
 
       case 'v':
