@@ -314,31 +314,26 @@ int process_command(mhopt_t *opts)
             opts->timeout);
         if (err != sizeof(packet))
         {
+          perror("write");
           continue;
         }
-        break;
-      }
-      if (err != sizeof(packet))
-      {
-        perror("write");
-        err = -3; goto error;
-      }
 
       /* read response */
-      tries = opts->tries;
-      while(tries--)
-      {
         err = perform_io((io_func_t) read, fd, &packet, sizeof(packet),
             opts->timeout);
         if (err != sizeof(packet))
         {
+          perror("read");
           continue;
         }
         break;
       }
       if (err != sizeof(packet))
       {
-        perror("read");
+        err = -3; goto error;
+      }
+      if (!tries)
+      {
         err = -4; goto error;
       }
 
