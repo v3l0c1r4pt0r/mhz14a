@@ -24,16 +24,16 @@
 #define speed(baudrate) { baudrate, B##baudrate }
 
 typedef struct {
-  char *device; /*< filename of UART device */
-  int baudrate; /*< baudrate (usually 9600) */
-  uint8_t databits; /*< number of data bits (usually 8) */
-  uint8_t parity; /*< parity bit (usually no parity) */
-  uint8_t stopbits; /*< number of stop bits x10 (usually 10) */
-  command_t command; /*< command to execute on sensor (depending on command
+  char *device; /**< filename of UART device */
+  int baudrate; /**< baudrate (usually 9600) */
+  uint8_t databits; /**< number of data bits (usually 8) */
+  uint8_t parity; /**< parity bit (usually no parity) */
+  uint8_t stopbits; /**< number of stop bits x10 (usually 10) */
+  command_t command; /**< command to execute on sensor (depending on command
                       *  parameter has to be filled) */
-  uint16_t gas_concentration; /*< output - gas concentration if read command
+  uint16_t gas_concentration; /**< output - gas concentration if read command
                                *  selected */
-  uint16_t span_point; /*< input - span point to set if calibrate span point
+  uint16_t span_point; /**< input - span point to set if calibrate span point
                         *  selected */
   int timeout; /**< number of seconds to wait before failing attempt (0 -
                  infinity) */
