@@ -74,7 +74,9 @@ int main(int argc, char **argv)
     .stopbits = 10,
     .command = 0,
     .gas_concentration = 0,
-    .span_point = 0
+    .span_point = 0,
+    .timeout = 0,
+    .tries = 1,
   };
   int result;
   int i;

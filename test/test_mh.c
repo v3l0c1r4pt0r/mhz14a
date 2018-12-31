@@ -634,6 +634,7 @@ static void test_process_command(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = 0;
   uint8_t actual;
@@ -701,6 +702,7 @@ static void test_process_command_write_again(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = 0;
   uint8_t actual;
@@ -773,6 +775,7 @@ static void test_process_command_read_again(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = 0;
   uint8_t actual;
@@ -845,6 +848,7 @@ static void test_process_command_write_intr(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = 0;
   uint8_t actual;
@@ -916,6 +920,7 @@ static void test_process_command_read_intr(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = 0;
   uint8_t actual;
@@ -987,6 +992,7 @@ static void test_process_command_write_error(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = -3;
   uint8_t actual;
@@ -1053,6 +1059,7 @@ static void test_process_command_read_error(void **state)
     .parity = 'O',
     .stopbits = 20,
     .command = CMD_GAS_CONCENTRATION,
+    .tries = 1,
   };
   uint8_t expected = -4;
   uint8_t actual;

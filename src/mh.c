@@ -282,6 +282,7 @@ int process_command(mhopt_t *opts)
   size_t left = 0;
   size_t processed = 0;
   uint16_t result = (uint16_t)-1;
+  int tries = 0;
 
   if ((fd = open(opts->device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
   {
@@ -305,7 +306,16 @@ int process_command(mhopt_t *opts)
     case CMD_GAS_CONCENTRATION:
       /* write request */
       packet = init_read_gas_packet();
-      err = perform_io((io_func_t) write, fd, &packet, sizeof(packet), 0);
+      tries = opts->tries;
+      while (tries--)
+      {
+        err = perform_io((io_func_t) write, fd, &packet, sizeof(packet), 0);
+        if (err != sizeof(packet))
+        {
+          continue;
+        }
+        break;
+      }
       if (err != sizeof(packet))
       {
         perror("write");
@@ -313,7 +323,16 @@ int process_command(mhopt_t *opts)
       }
 
       /* read response */
-      err = perform_io((io_func_t) read, fd, &packet, sizeof(packet), 0);
+      tries = opts->tries;
+      while(tries--)
+      {
+        err = perform_io((io_func_t) read, fd, &packet, sizeof(packet), 0);
+        if (err != sizeof(packet))
+        {
+          continue;
+        }
+        break;
+      }
       if (err != sizeof(packet))
       {
         perror("read");
