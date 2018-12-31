@@ -211,6 +211,12 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
   return 0;
 }
 
+ssize_t perform_io(io_func_t func, int fd, const void *buf, size_t count,
+    int timeout)
+{
+  return (ssize_t)-1;
+}
+
 int process_command(mhopt_t *opts)
 {
   int err = 0;

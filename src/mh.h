@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <termios.h>
+#include <unistd.h>
 
 #include "mh_uart.h"
 
@@ -51,6 +52,23 @@ typedef struct {
   int baudrate;
   speed_t speed;
 } speedopt_t;
+
+typedef ssize_t (*io_func_t)(int fd, const void *buf, size_t count);
+
+/**
+ * \brief Perform IO operation until desired buffer fully processed
+ *
+ * \param func IO function to perform. This can be either read or write
+ * \param fd File descriptor
+ * \param buf Buffer to process
+ * \param count Number of bytes in buffer
+ * \param timeout Number of seconds after which function will give up
+ *
+ * \return Number of bytes processed. Usually same as count
+ * \retval -1 Error occurred and errno set accordingly
+ */
+ssize_t perform_io(io_func_t func, int fd, const void *buf, size_t count,
+    int timeout);
 
 int process_command(mhopt_t *opts);
 

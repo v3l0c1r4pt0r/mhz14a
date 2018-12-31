@@ -517,6 +517,20 @@ static void test_termios_full(void **state)
   assert_int_equal(expected, actual);
 }
 
+static void test_perform_io(void **state)
+{
+  uint8_t expected = 6;
+  uint8_t actual;
+
+  expect_value(__wrap_write, fd, 1337);
+  expect_memory(__wrap_write, buf, "test\n\r", 6);
+  will_return(__wrap_write, 6);
+
+  actual = perform_io(write, 1337, "test\n\r", 6, 0);
+
+  assert_int_equal(expected, actual);
+}
+
 static void test_process_command(void **state)
 {
   mhopt_t opts = {
@@ -1078,6 +1092,7 @@ int main()
     cmocka_unit_test(test_termios_do_nothing),
     cmocka_unit_test(test_termios_params),
     cmocka_unit_test(test_termios_full),
+    cmocka_unit_test(test_perform_io),
     cmocka_unit_test(test_process_command),
     cmocka_unit_test(test_process_command_write_intr),
     cmocka_unit_test(test_process_command_read_intr),
