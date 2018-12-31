@@ -248,10 +248,11 @@ ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
         return (ssize_t)-1;
       }
 
-      result = select(fd, rfd, wfd, efd, &tv);
+      result = select(fd + 1, rfd, wfd, efd, &tv);
       if (result == -1)
       {
         perror("select");
+        return (ssize_t)-1;
       }
       else if (!result)
       {
