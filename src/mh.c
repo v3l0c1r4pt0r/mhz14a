@@ -309,7 +309,8 @@ int process_command(mhopt_t *opts)
       tries = opts->tries;
       while (tries--)
       {
-        err = perform_io((io_func_t) write, fd, &packet, sizeof(packet), 0);
+        err = perform_io((io_func_t) write, fd, &packet, sizeof(packet),
+            opts->timeout);
         if (err != sizeof(packet))
         {
           continue;
@@ -326,7 +327,8 @@ int process_command(mhopt_t *opts)
       tries = opts->tries;
       while(tries--)
       {
-        err = perform_io((io_func_t) read, fd, &packet, sizeof(packet), 0);
+        err = perform_io((io_func_t) read, fd, &packet, sizeof(packet),
+            opts->timeout);
         if (err != sizeof(packet))
         {
           continue;
