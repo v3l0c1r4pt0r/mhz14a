@@ -20,6 +20,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/select.h>
 
 #include "mh.h"
 
@@ -216,14 +217,49 @@ ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
 {
   size_t left = 0;
   size_t processed = 0;
-
-  // TODO: timeout !!!
-  if (timeout != 0)
-    return -1;
+  fd_set fds;
+  fd_set *rfd = NULL, *wfd = NULL, *efd = NULL;
+  struct timeval tv;
+  int result = -1;
 
   left = count;
   while (left > 0)
   {
+    if (timeout != 0)
+    {
+      /* select descriptor to ensure that it will not block */
+      tv.tv_sec = timeout;
+      tv.tv_usec = 0;
+
+      FD_ZERO(&fds);
+      FD_SET(fd, &fds);
+
+      if (func == &read)
+      {
+        rfd = &fds;
+      }
+      else if (func == &write)
+      {
+        wfd = &fds;
+      }
+      else
+      {
+        errno = ENOTSUP;
+        return (ssize_t)-1;
+      }
+
+      result = select(fd, rfd, wfd, efd, &tv);
+      if (result == -1)
+      {
+        perror("select");
+      }
+      else if (!result)
+      {
+        /* timeout */
+        errno = ENODATA;
+        return (ssize_t)-1;
+      }
+    }
     processed = func(fd, buf + count - left, left);
     if (processed == -1)
     {

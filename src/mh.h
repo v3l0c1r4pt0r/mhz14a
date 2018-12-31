@@ -64,8 +64,9 @@ typedef ssize_t (*io_func_t)(int fd, const void *buf, size_t count);
  * \param count Number of bytes in buffer
  * \param timeout Number of seconds after which function will give up
  *
- * \return Number of bytes processed. Usually same as count
- * \retval -1 Error occurred and errno set accordingly
+ * \return Number of bytes processed. Usually same as count or -1 for errors
+ * \retval ENODATA set in errno if timeout occurred
+ * \retval ENOTSUP set in errno if timeout requested for not supported function
  */
 ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
     int timeout);
