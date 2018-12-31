@@ -6,4 +6,4 @@ target_include_directories(test_mhz14a PRIVATE ${CMAKE_BINARY_DIR}/src)
 add_mocked_test(mh_uart)
 add_mocked_test(mh
   SOURCES ${CMAKE_SOURCE_DIR}/src/mh_uart.c
-  MOCKS tcgetattr tcsetattr open close write read)
+  MOCKS tcgetattr tcsetattr open close write read select)

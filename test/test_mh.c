@@ -145,6 +145,25 @@ ssize_t __wrap_read(int fd, void *buf, size_t count)
   return src_len;
 }
 
+int __wrap_select(int nfds, fd_set *readfds, fd_set *writefds,
+    fd_set *exceptfds, struct timeval *timeout)
+{
+  unsigned int sec = mock();
+
+  check_expected(nfds);
+  check_expected(readfds);
+  check_expected(writefds);
+  check_expected(exceptfds);
+  check_expected(timeout);
+
+//if (sec)
+//{
+//  sleep(sec);
+//}
+
+  return mock();
+}
+
 #define test_x_to_baud(x, speed, err) static void test_to_baud_##x(void **state) \
 { \
   speed_t expected = speed; \
@@ -563,6 +582,43 @@ static void test_perform_io_error(void **state)
   will_return(__wrap_write, EBADF);
 
   actual = perform_io(write, 1337, "test\n\r", 6, 0);
+  acterror = errno;
+
+  assert_int_equal(expected, actual);
+  assert_int_equal(experror, acterror);
+}
+
+static void test_perform_io_time(void **state)
+{
+  uint8_t expected = -1;
+  uint8_t actual;
+  int experror = ENODATA, acterror = 0;
+
+  expect_any(__wrap_select, nfds);
+  expect_any(__wrap_select, readfds);
+  expect_any(__wrap_select, writefds);
+  expect_any(__wrap_select, exceptfds);
+  expect_any(__wrap_select, timeout);
+  will_return(__wrap_select, 0); /* timeout */
+  will_return(__wrap_select, 1);
+
+  expect_value(__wrap_write, fd, 1337);
+  expect_memory(__wrap_write, buf, "test\n\r", 6);
+  will_return(__wrap_write, 1);
+
+  expect_any(__wrap_select, nfds);
+  expect_any(__wrap_select, readfds);
+  expect_any(__wrap_select, writefds);
+  expect_any(__wrap_select, exceptfds);
+  expect_any(__wrap_select, timeout);
+  will_return(__wrap_select, 2); /* timeout */
+  will_return(__wrap_select, 0);
+
+//expect_value(__wrap_write, fd, 1337);
+//expect_memory(__wrap_write, buf, "est\n\r", 6);
+//will_return(__wrap_write, 5);
+
+  actual = perform_io(write, 1337, "test\n\r", 6, 1);
   acterror = errno;
 
   assert_int_equal(expected, actual);
@@ -1133,6 +1189,7 @@ int main()
     cmocka_unit_test(test_perform_io),
     cmocka_unit_test(test_perform_io_intr),
     cmocka_unit_test(test_perform_io_error),
+    cmocka_unit_test(test_perform_io_time),
     cmocka_unit_test(test_process_command),
     cmocka_unit_test(test_process_command_write_intr),
     cmocka_unit_test(test_process_command_read_intr),
