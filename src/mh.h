@@ -35,6 +35,9 @@ typedef struct {
                                *  selected */
   uint16_t span_point; /*< input - span point to set if calibrate span point
                         *  selected */
+  int timeout; /**< number of seconds to wait before failing attempt (0 -
+                 infinity) */
+  int tries; /**< number of attempts to perform */
 } mhopt_t;
 
 typedef enum {

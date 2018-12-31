@@ -48,6 +48,9 @@ void help(char usage, char *progname)
         "                      (default: 8N1)\n"
         "  -d, --dev=DEVICE    set device at which sensor can be found\n"
         "                      (default: /dev/ttyS0)\n"
+        "  -t,--timeout=SEC    set number of seconds before timeout to SEC (default:\n"
+        "                      0 - infinity)\n"
+        "  -T,--times=TRIES    set number of tries to TRIES (default: 1 - no retry)\n"
         "      --log=LEVEL     set logging verbosity to LEVEL (default: 0 - error)\n"
         "                      One of the following is allowed (either number or text):\n"
         "                        0/ERROR; 1/WARNING; 2/INFO; 3/DEBUG\n"
@@ -90,6 +93,8 @@ int main(int argc, char **argv)
       {"zero", no_argument, 0, 'z' },
       {"span", required_argument, 0, 's' },
       /* general */
+      {"timeout", required_argument, 0, 't' },
+      {"times", required_argument, 0, 'T' },
       {"log", required_argument, 0, OPT_LOG },
       {"version", no_argument, 0, 'v' },
       {"help", no_argument, 0, 'h' },
@@ -179,6 +184,16 @@ int main(int argc, char **argv)
         }
 
         opts.command = CMD_CALIBRATE_ZERO;
+        break;
+
+      case 't':
+        /* --timeout=SEC */
+        opts.timeout = atol(optarg); // TODO: maybe safer ?
+        break;
+
+      case 'T':
+        /* --times=TRIES */
+        opts.tries = atol(optarg); // TODO: maybe safer ?
         break;
 
       case OPT_LOG:
