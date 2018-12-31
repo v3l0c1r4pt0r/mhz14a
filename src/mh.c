@@ -214,7 +214,28 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
 ssize_t perform_io(io_func_t func, int fd, const void *buf, size_t count,
     int timeout)
 {
-  return (ssize_t)-1;
+  size_t left = 0;
+  size_t processed = 0;
+
+  // TODO: timeout !!!
+  if (timeout != 0)
+    return -1;
+
+  left = count;
+  while (left > 0)
+  {
+    processed = func(fd, buf + count - left, left);
+    if (processed == -1)
+    {
+      if (errno == EAGAIN)
+      {
+        continue;
+      }
+      return (ssize_t)-1;
+    }
+    left -= processed;
+  }
+  return count - left;
 }
 
 int process_command(mhopt_t *opts)
