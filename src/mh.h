@@ -67,7 +67,7 @@ typedef ssize_t (*io_func_t)(int fd, const void *buf, size_t count);
  * \return Number of bytes processed. Usually same as count
  * \retval -1 Error occurred and errno set accordingly
  */
-ssize_t perform_io(io_func_t func, int fd, const void *buf, size_t count,
+ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
     int timeout);
 
 int process_command(mhopt_t *opts);

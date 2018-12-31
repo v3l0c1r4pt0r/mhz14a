@@ -211,7 +211,7 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
   return 0;
 }
 
-ssize_t perform_io(io_func_t func, int fd, const void *buf, size_t count,
+ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
     int timeout)
 {
   size_t left = 0;
@@ -269,38 +269,22 @@ int process_command(mhopt_t *opts)
     case CMD_GAS_CONCENTRATION:
       /* write request */
       packet = init_read_gas_packet();
-      left = sizeof(packet);
-      while (left > 0)
+      err = perform_io((io_func_t) write, fd, &packet, sizeof(packet), 0);
+      if (err != sizeof(packet))
       {
-        processed = write(fd, ((void*) &packet) + sizeof(packet) - left, left);
-        if (processed == -1)
-        {
-          if (errno == EAGAIN)
-          {
-            continue;
-          }
-          perror("write");
-          err = -3; goto error;
-        }
-        left -= processed;
+        perror("write");
+        err = -3; goto error;
       }
 
       /* read response */
-      left = sizeof(packet);
-      while (left > 0)
+      err = perform_io((io_func_t) read, fd, &packet, sizeof(packet), 0);
+      if (err != sizeof(packet))
       {
-        processed = read(fd, ((void*) &packet) + sizeof(packet) - left, left);
-        if (processed == -1)
-        {
-          if (errno == EAGAIN)
-          {
-            continue;
-          }
-          perror("read");
-          err = -4; goto error;
-        }
-        left -= processed;
+        perror("read");
+        err = -4; goto error;
       }
+
+      /* parse response */
       result = return_gas_concentration(packet);
       if (result == (uint16_t)-1)
       {
