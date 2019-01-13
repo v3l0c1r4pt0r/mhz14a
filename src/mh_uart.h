@@ -20,9 +20,11 @@
 #define __packed__ __attribute__ ((packed))
 
 typedef enum {
+  CMD_SWITCH_ABC = 0x79,
   CMD_GAS_CONCENTRATION = 0x86,
   CMD_CALIBRATE_ZERO = 0x87,
   CMD_CALIBRATE_SPAN = 0x88,
+  CMD_SET_RANGE = 0x99,
 } command_t;
 
 typedef struct {
