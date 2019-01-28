@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "logger.h"
 
@@ -83,4 +84,17 @@ char *get_log_level()
 {
   level_t level = get_numeric_log_level();
   return levelopts[level].text;
+}
+
+void LOG(level_t level, char *format, ...)
+{
+  va_list va;
+  if (level > get_numeric_log_level())
+  {
+    return;
+  }
+  printf("[%s] ", levelopts[level].text);
+  va_start(va, format);
+  vprintf(format, va);
+  va_end(va);
 }

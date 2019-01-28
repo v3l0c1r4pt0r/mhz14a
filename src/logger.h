@@ -17,6 +17,10 @@
 #define LOGGER_H
 
 #define LEVELOPT(name) {.value = LEVEL_##name, .text = #name}
+#define ERROR(format, ...) LOG(LEVEL_ERROR, format, __VA_ARGS__)
+#define WARNING(format, ...) LOG(LEVEL_WARNING, format, __VA_ARGS__)
+#define INFO(format, ...) LOG(LEVEL_INFO, format, __VA_ARGS__)
+#define DEBUG(format, ...) LOG(LEVEL_DEBUG, format, __VA_ARGS__)
 
 typedef enum {
   LEVEL_ERROR = 0, /**< This is default setting */
@@ -66,5 +70,14 @@ level_t get_numeric_log_level();
  * \return log level in human-readable form
  */
 char *get_log_level();
+
+/**
+ * \brief Log message under given level
+ *
+ * \param level minimum level at which message will be visible to user
+ * \param format message format
+ * \param ...
+ */
+void LOG(level_t level, char *format, ...);
 
 #endif // LOGGER_H
