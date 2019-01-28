@@ -34,7 +34,7 @@ int set_numeric_log_level(level_t level)
     return 1;
   }
   log_level = level;
-  printf("Info: log level set to %s(%d)\n", get_log_level(), log_level);
+  INFO("log level set to %s(%d)\n", get_log_level(), log_level);
   return 0;
 }
 
@@ -46,7 +46,6 @@ int set_log_level(const char *level)
     /* TODO: use strtol instead of atol */
     if (set_numeric_log_level(atol(level)))
     {
-      printf("Error: unknown log level: %d\n", log_level);
       return 1;
     }
   }
@@ -59,7 +58,6 @@ int set_log_level(const char *level)
       {
         if (set_numeric_log_level(i))
         {
-          printf("Error: unknown log level: %d\n", log_level);
           return 1;
         }
         break;
@@ -67,7 +65,6 @@ int set_log_level(const char *level)
     }
     if (log_level == LEVEL_MAX)
     {
-      printf("Error: unknown log level: %s\n", level);
       return 1;
     }
   }

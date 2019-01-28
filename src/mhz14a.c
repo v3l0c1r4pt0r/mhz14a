@@ -196,6 +196,7 @@ int main(int argc, char **argv)
         /* --log */
         if (set_log_level(optarg))
         {
+          ERROR("unknown log level: %s\n", optarg);
           return RET_ARG;
         }
         break;
