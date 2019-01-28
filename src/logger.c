@@ -24,7 +24,7 @@ levelopt_t levelopts[] = {
   LEVELOPT(ERROR), LEVELOPT(WARNING), LEVELOPT(INFO), LEVELOPT(DEBUG)
 };
 
-level_t log_level = LEVEL_ERROR;
+static level_t log_level = LEVEL_ERROR;
 
 int set_numeric_log_level(level_t level)
 {

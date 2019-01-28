@@ -31,8 +31,6 @@ typedef struct {
   char *text;
 } levelopt_t;
 
-extern level_t log_level;
-
 int set_numeric_log_level(level_t level);
 int set_log_level(const char *level);
 
