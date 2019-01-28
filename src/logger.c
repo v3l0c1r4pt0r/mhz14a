@@ -33,7 +33,7 @@ int set_numeric_log_level(level_t level)
     return 1;
   }
   log_level = level;
-  printf("Info: log level set to %d\n", log_level);
+  printf("Info: log level set to %s(%d)\n", get_log_level(), log_level);
   return 0;
 }
 
@@ -72,4 +72,15 @@ int set_log_level(const char *level)
   }
 
   return 0;
+}
+
+level_t get_numeric_log_level()
+{
+  return log_level;
+}
+
+char *get_log_level()
+{
+  level_t level = get_numeric_log_level();
+  return levelopts[level].text;
 }

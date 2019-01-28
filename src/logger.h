@@ -53,4 +53,18 @@ int set_numeric_log_level(level_t level);
  */
 int set_log_level(const char *level);
 
+/**
+ * \brief Get log level value
+ *
+ * \return log level as \link level_t \endlink enum
+ */
+level_t get_numeric_log_level();
+
+/**
+ * \brief Get log level description
+ *
+ * \return log level in human-readable form
+ */
+char *get_log_level();
+
 #endif // LOGGER_H
