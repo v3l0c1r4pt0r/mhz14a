@@ -23,15 +23,10 @@
 #include "mhz14a.h"
 #include "mh_uart.h"
 #include "mh.h"
+#include "logger.h"
 #include "config.h"
 
 #define OPT_LOG (CHAR_MAX + 1)
-
-levelopt_t levelopts[] = {
-  LEVELOPT(ERROR), LEVELOPT(WARNING), LEVELOPT(INFO), LEVELOPT(DEBUG)
-};
-
-level_t log_level = LEVEL_ERROR;
 
 void help(char usage, char *progname)
 {
@@ -79,7 +74,6 @@ int main(int argc, char **argv)
     .tries = 1,
   };
   int result;
-  int i;
 
   while (1) {
     int this_option_optind = optind ? optind : 1;
@@ -200,36 +194,9 @@ int main(int argc, char **argv)
 
       case OPT_LOG:
         /* --log */
-        if (isdigit(optarg[0]))
+        if (set_log_level(optarg))
         {
-          log_level = atol(optarg);
-          if (log_level < LEVEL_MAX)
-          {
-            printf("Info: log level set to %d\n", log_level);
-          }
-          else
-          {
-            printf("Error: unknown log level: %d\n", log_level);
-            return RET_ARG;
-          }
-        }
-        else
-        {
-          log_level = LEVEL_MAX;
-          for (i = 0; i < LEVEL_MAX; i++)
-          {
-            if (strcmp(levelopts[i].text, optarg) == 0)
-            {
-              log_level = i;
-              printf("Info: log level set to %d - %s\n", i, optarg);
-              break;
-            }
-          }
-          if (log_level == LEVEL_MAX)
-          {
-            printf("Error: unknown log level: %s\n", optarg);
-            return RET_ARG;
-          }
+          return RET_ARG;
         }
         break;
 

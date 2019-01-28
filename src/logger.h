@@ -13,17 +13,27 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef MHZ14A_H
-#define MHZ14A_H
+#ifndef LOGGER_H
+#define LOGGER_H
+
+#define LEVELOPT(name) {.value = LEVEL_##name, .text = #name}
 
 typedef enum {
-  RET_SUCCESS = 0,
-  RET_NOCMD,
-  RET_CMD_DUPL,
-  RET_MODE_ERR,
-  RET_ARG,
-  RET_UNPARSED,
-  RET_INTERNAL = 255
-} result_t;
+  LEVEL_ERROR = 0, /**< This is default setting */
+  LEVEL_WARNING,
+  LEVEL_INFO,
+  LEVEL_DEBUG,
+  LEVEL_MAX, /**< This is pseudo level - do not use */
+} level_t;
 
-#endif // MHZ14A_H
+typedef struct {
+  level_t value;
+  char *text;
+} levelopt_t;
+
+extern level_t log_level;
+
+int set_numeric_log_level(level_t level);
+int set_log_level(const char *level);
+
+#endif // LOGGER_H
