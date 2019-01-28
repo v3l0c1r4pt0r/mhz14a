@@ -31,7 +31,26 @@ typedef struct {
   char *text;
 } levelopt_t;
 
+/**
+ * \brief Set logging verbosity to numeric value
+ *
+ * \param level level of verbosity to set
+ *
+ * \return error code
+ * \retval 0 no error
+ * \retval 1 error occurred
+ */
 int set_numeric_log_level(level_t level);
+
+/**
+ * \brief Set logging verbosity to named value
+ *
+ * \param level level of verbosity to set as either ASCII number or name
+ *
+ * \return error code
+ * \retval 0 no error
+ * \retval 1 error occurred
+ */
 int set_log_level(const char *level);
 
 #endif // LOGGER_H
