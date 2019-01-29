@@ -17,10 +17,10 @@
 #define LOGGER_H
 
 #define LEVELOPT(name) {.value = LEVEL_##name, .text = #name}
-#define ERROR(format, ...) LOG(LEVEL_ERROR, format, __VA_ARGS__)
-#define WARNING(format, ...) LOG(LEVEL_WARNING, format, __VA_ARGS__)
-#define INFO(format, ...) LOG(LEVEL_INFO, format, __VA_ARGS__)
-#define DEBUG(format, ...) LOG(LEVEL_DEBUG, format, __VA_ARGS__)
+#define ERROR(...) LOG(LEVEL_ERROR, __VA_ARGS__)
+#define WARNING(...) LOG(LEVEL_WARNING, __VA_ARGS__)
+#define INFO(...) LOG(LEVEL_INFO, __VA_ARGS__)
+#define DEBUG(...) LOG(LEVEL_DEBUG, __VA_ARGS__)
 
 typedef enum {
   LEVEL_ERROR = 0, /**< This is default setting */
