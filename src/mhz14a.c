@@ -133,7 +133,7 @@ int main(int argc, char **argv)
             (!isupper(optarg[1]) && !islower(optarg[1])) ||
             !isdigit(optarg[2]))
         {
-          printf("Error! Unsupported mode\n");
+          ERROR("Unsupported mode\n");
           return RET_MODE_ERR;
         }
 
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
         /* --read */
         if (opts.command != 0)
         {
-          printf("Error: more than one command given\n");
+          ERROR("more than one command given\n");
           return RET_CMD_DUPL;
         }
 
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
         /* --span=SPANPOINT */
         if (opts.command != 0)
         {
-          printf("Error: more than one command given\n");
+          ERROR("more than one command given\n");
           return RET_CMD_DUPL;
         }
 
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
         /* --zero */
         if (opts.command != 0)
         {
-          printf("Error: more than one command given\n");
+          ERROR("more than one command given\n");
           return RET_CMD_DUPL;
         }
 
@@ -217,27 +217,27 @@ int main(int argc, char **argv)
 
       default:
         /* optstrings not handled (mistakes?) */
-        printf("?? getopt returned character code 0%o ??\n", c);
+        WARNING("getopt returned character code 0%o ??\n", c);
     }
   }
 
   /* positional arguments */
   if (optind < argc) {
-    printf("Error: too many arguments provided!\n");
+    ERROR("too many arguments provided!\n");
     return RET_UNPARSED;
   }
 
   /* check if command was already given */
   if (opts.command == 0)
   {
-    printf("Error: no command given\n");
+    ERROR("no command given\n");
     return RET_NOCMD;
   }
 
   result = process_command(&opts);
   if (result != 0)
   {
-    printf("Error! Execution returned %d\n", result);
+    ERROR("Execution returned %d\n", result);
   }
   else
   {
@@ -248,10 +248,10 @@ int main(int argc, char **argv)
         break;
       case CMD_CALIBRATE_SPAN:
       case CMD_CALIBRATE_ZERO:
-        printf("Error! Not implemented\n");
+        ERROR("Not implemented\n");
         return 42;
       default:
-        printf("Error! Internal error on command %x\n", opts.command);
+        ERROR("Internal error on command %x\n", opts.command);
         return RET_INTERNAL;
     }
   }
