@@ -133,7 +133,7 @@ int main(int argc, char **argv)
             (!isupper(optarg[1]) && !islower(optarg[1])) ||
             !isdigit(optarg[2]))
         {
-          ERROR("Unsupported mode\n");
+          ERROR("Unsupported mode");
           return RET_MODE_ERR;
         }
 
@@ -145,14 +145,14 @@ int main(int argc, char **argv)
 
       case 'd':
         /* --device=FILE */
-        opts.device = strdup(optarg);
+        opts.device = strdup(optarg); // TODO: call free()
         break;
 
       case 'r':
         /* --read */
         if (opts.command != 0)
         {
-          ERROR("more than one command given\n");
+          ERROR("more than one command given");
           return RET_CMD_DUPL;
         }
 
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
         /* --span=SPANPOINT */
         if (opts.command != 0)
         {
-          ERROR("more than one command given\n");
+          ERROR("more than one command given");
           return RET_CMD_DUPL;
         }
 
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
         /* --zero */
         if (opts.command != 0)
         {
-          ERROR("more than one command given\n");
+          ERROR("more than one command given");
           return RET_CMD_DUPL;
         }
 
@@ -196,7 +196,7 @@ int main(int argc, char **argv)
         /* --log */
         if (set_log_level(optarg))
         {
-          ERROR("unknown log level: %s\n", optarg);
+          ERROR("unknown log level: %s", optarg);
           return RET_ARG;
         }
         break;
@@ -217,27 +217,27 @@ int main(int argc, char **argv)
 
       default:
         /* optstrings not handled (mistakes?) */
-        WARNING("getopt returned character code 0%o ??\n", c);
+        WARNING("getopt returned character code 0%o", c);
     }
   }
 
   /* positional arguments */
   if (optind < argc) {
-    ERROR("too many arguments provided!\n");
+    ERROR("too many arguments provided!");
     return RET_UNPARSED;
   }
 
   /* check if command was already given */
   if (opts.command == 0)
   {
-    ERROR("no command given\n");
+    ERROR("no command given");
     return RET_NOCMD;
   }
 
   result = process_command(&opts);
   if (result != 0)
   {
-    ERROR("Execution returned %d\n", result);
+    ERROR("Execution returned %d", result);
   }
   else
   {
@@ -248,10 +248,10 @@ int main(int argc, char **argv)
         break;
       case CMD_CALIBRATE_SPAN:
       case CMD_CALIBRATE_ZERO:
-        ERROR("Not implemented\n");
+        ERROR("Not implemented");
         return 42;
       default:
-        ERROR("Internal error on command %x\n", opts.command);
+        ERROR("Internal error on command %x", opts.command);
         return RET_INTERNAL;
     }
   }

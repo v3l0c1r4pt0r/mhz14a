@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <unistd.h>
 
 #include "logger.h"
 
@@ -34,7 +35,7 @@ int set_numeric_log_level(level_t level)
     return 1;
   }
   log_level = level;
-  INFO("log level set to %s(%d)\n", get_log_level(), log_level);
+  INFO("log level set to %s(%d)", get_log_level(), log_level);
   return 0;
 }
 
@@ -90,8 +91,12 @@ void LOG(level_t level, char *format, ...)
   {
     return;
   }
+
   printf("[%s] ", levelopts[level].text);
+
   va_start(va, format);
   vprintf(format, va);
   va_end(va);
+
+  printf("\n");
 }
