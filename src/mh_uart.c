@@ -73,10 +73,24 @@ uint16_t return_gas_concentration(pkt_t packet)
   return_gas_t return_packet = *((return_gas_t*) &packet);
 
   /* verify packet contents */
-  if (return_packet.start != 0xff ||
-      return_packet.command != CMD_GAS_CONCENTRATION ||
-      checksum(&packet) != return_packet.checksum)
+  if (return_packet,start != 0xff)
   {
+    INFO("Expected 0xff as first byte of packet, 0x%x given",
+        return_packet.start);
+    errno = EINVAL;
+    return (uint16_t)-1;
+  }
+  if (return_packet,command != CMD_GAS_CONCENTRATION)
+  {
+    INFO("Expected return packet for gas concentration, 0x%x given",
+        return_packet.command);
+    errno = EINVAL;
+    return (uint16_t)-1;
+  }
+  if (checksum(&packet) != return_packet.checksum)
+  {
+    INFO("Expected checksum was 0x%x, 0x%x given", checksum(&packet),
+        return_packet.checksum);
     errno = EINVAL;
     return (uint16_t)-1;
   }
@@ -91,6 +105,7 @@ uint8_t checksum(pkt_t *packet)
 
   if (packet == NULL)
   {
+    WARNING("No packet given, checksum cannot be computed");
     return cs;
   }
 
