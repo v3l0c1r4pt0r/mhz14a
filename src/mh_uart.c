@@ -24,9 +24,9 @@ pkt_t init_read_gas_packet()
   pkt_t result;
   read_gas_t packet = {
     .start = 0xff,
-      .sensor = 1,
-      .command = CMD_GAS_CONCENTRATION,
-      .reserved = {0,0,0,0,0},
+    .sensor = 1,
+    .command = CMD_GAS_CONCENTRATION,
+    .reserved = {0,0,0,0,0},
   };
 
   packet.checksum = checksum((pkt_t*)&packet);
@@ -40,10 +40,10 @@ pkt_t init_calibrate_span_packet(uint16_t span_point)
   pkt_t result;
   calibrate_span_t packet = {
     .start = 0xff,
-      .sensor = 1,
-      .command = CMD_CALIBRATE_SPAN,
-      .span_point = htobe16(span_point),
-      .reserved = {0,0,0},
+    .sensor = 1,
+    .command = CMD_CALIBRATE_SPAN,
+    .span_point = htobe16(span_point),
+    .reserved = {0,0,0},
   };
 
   packet.checksum = checksum((pkt_t*)&packet);
@@ -57,9 +57,9 @@ pkt_t init_calibrate_zero_packet()
   pkt_t result;
   calibrate_zero_t packet = {
     .start = 0xff,
-      .sensor = 1,
-      .command = CMD_CALIBRATE_ZERO,
-      .reserved = {0,0,0,0,0},
+    .sensor = 1,
+    .command = CMD_CALIBRATE_ZERO,
+    .reserved = {0,0,0,0,0},
   };
 
   packet.checksum = checksum((pkt_t*)&packet);
