@@ -248,6 +248,8 @@ int main(int argc, char **argv)
         break;
       case CMD_CALIBRATE_SPAN:
       case CMD_CALIBRATE_ZERO:
+      case CMD_SWITCH_ABC:
+      case CMD_SET_RANGE:
         ERROR("Not implemented");
         return 42;
       default:
