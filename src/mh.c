@@ -55,6 +55,7 @@ speed_t int_to_baud(int baud)
       return speed->speed;
     }
   }
+  DEBUG("Unsupported baudrate: %d", baud);
   errno = ENOTSUP;
   return -1;
 }
@@ -65,12 +66,14 @@ int int_to_charsize(int databits, tcflag_t *cflags)
 
   if (cflags == NULL)
   {
+    DEBUG("Nowhere to write character size to");
     return -1;
   }
 
   /* check if there is opt for given param */
   if (((uint8_t) databits) >= sizeof(databitopts)/sizeof(tcflag_t))
   {
+    DEBUG("Num of databits greater than maximum supported value: %d", databits);
     return -2;
   }
 
@@ -80,6 +83,7 @@ int int_to_charsize(int databits, tcflag_t *cflags)
    * bounds */
   if (bits == -1)
   {
+    DEBUG("Unsupported data bit count: %d", databits);
     return -2;
   }
 
@@ -95,6 +99,7 @@ int char_to_parity(char parity, tcflag_t *cflags)
 
   if (cflags == NULL)
   {
+    DEBUG("Nowhere to write parity indicator to");
     return -1;
   }
 
@@ -105,7 +110,7 @@ int char_to_parity(char parity, tcflag_t *cflags)
 
   if ((parityopts[parity] & (1<<31)) == 0)
   {
-    /* unsupported */
+    DEBUG("Unsupported parity: %c", parity);
     return -2;
   }
 
@@ -119,6 +124,7 @@ int int_to_stopbits(int stopbits, tcflag_t *cflags)
 {
   if (cflags == NULL)
   {
+    DEBUG("Nowhere to write stop bit size to");
     return -1;
   }
 
@@ -127,6 +133,7 @@ int int_to_stopbits(int stopbits, tcflag_t *cflags)
     case 10: *cflags &= ~CSTOPB; break;
     case 20: *cflags |= CSTOPB; break;
     default:
+      DEBUG("%d.%d stop bits are not supported", stopbits / 10, stopbits % 10);
       return -2;
   }
 
@@ -148,6 +155,8 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
   /* check if there is something to do */
   if (dir == DIR_UNDEFINED && databits == 0 && parity == '\0' && stopbits == 0)
   {
+    DEBUG("Neither direction, nor data, nor parity, nor stop bits "
+        "are to be set");
     return -2;
   }
 
@@ -165,6 +174,7 @@ int termios_params(int fd, int baud, direction_t dir, uint8_t databits,
     case DIR_BOTH: err = cfsetspeed(&options, baudbits); break;
     case DIR_UNDEFINED: /* do not set speed */ break;
     default:
+      DEBUG("Unsupported direction");
       errno = ENOTSUP;
       return -4;
   }
