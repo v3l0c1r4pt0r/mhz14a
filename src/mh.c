@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <sys/select.h>
 
+#include "logger.h"
 #include "mh.h"
 
 speedopt_t speeds[] = {

@@ -17,6 +17,7 @@
 #include <endian.h>
 #include <errno.h>
 
+#include "logger.h"
 #include "mh_uart.h"
 
 pkt_t init_read_gas_packet()
@@ -73,14 +74,14 @@ uint16_t return_gas_concentration(pkt_t packet)
   return_gas_t return_packet = *((return_gas_t*) &packet);
 
   /* verify packet contents */
-  if (return_packet,start != 0xff)
+  if (return_packet.start != 0xff)
   {
     INFO("Expected 0xff as first byte of packet, 0x%x given",
         return_packet.start);
     errno = EINVAL;
     return (uint16_t)-1;
   }
-  if (return_packet,command != CMD_GAS_CONCENTRATION)
+  if (return_packet.command != CMD_GAS_CONCENTRATION)
   {
     INFO("Expected return packet for gas concentration, 0x%x given",
         return_packet.command);
