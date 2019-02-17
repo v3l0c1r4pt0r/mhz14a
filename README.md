@@ -2,6 +2,18 @@
 
 MH-Z14A CO2 sensor reader
 
+## Installation
+
+Program uses cmake as a build system. It is encouraged to compile it out of
+source, e.g. in root of the repository one can execute:
+```
+mkdir -p build && cd build
+cmake ..
+make
+```
+
+This will leave mhz14a binary in `build/src/` of the repos root.
+
 ## Usage
 
 Basic usage of the program is as simple as executing:
@@ -33,6 +45,14 @@ gathering faulty situation report, logging should be turned on by passing
 `--log=DEBUG` parameter. In case of crashes, coredumps are welcome and having
 program distribution with debugging symbols is encouraged, to allow better
 understanding of the problem.
+
+## Testing
+
+By default unit tests are switched off when build the program. For compilation
+and running, they require cmocka to be installed in system. Then one can
+reconfigure cmake by appending `-DENABLE_TESTS=ON` to cmake invokation in
+installation step. After that, compilation will also compile test programs,
+which can be run using `make test` command.
 
 ## License
 
