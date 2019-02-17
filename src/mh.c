@@ -361,6 +361,32 @@ int process_command(mhopt_t *opts)
       }
       opts->gas_concentration = result;
       break;
+    case CMD_CALIBRATE_SPAN:
+      /* write request */
+      packet = init_calibrate_span_packet(opts->span_point);
+      tries = opts->tries;
+      while (tries--)
+      {
+        INFO("trying communications for %d time (out of %d)", opts->tries - tries, opts->tries);
+        err = perform_io((io_func_t) write, fd, &packet, sizeof(packet),
+            opts->timeout);
+        if (err != sizeof(packet))
+        {
+          ERROR("during write to device");
+          perror("write");
+          continue;
+        }
+        break;
+      }
+      if (err != sizeof(packet))
+      {
+        err = -3; goto error;
+      }
+      if (tries < 0)
+      {
+        err = -4; goto error;
+      }
+      break;
     default:
         err = -6; goto error;
   }
