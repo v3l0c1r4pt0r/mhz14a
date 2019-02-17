@@ -1061,7 +1061,7 @@ static void test_process_command_read_error(void **state)
     .command = CMD_GAS_CONCENTRATION,
     .tries = 1,
   };
-  uint8_t expected = -4;
+  uint8_t expected = -3;
   uint8_t actual;
 
   expect_string(__wrap_open, pathname, "/dev/ttyS1");

@@ -347,7 +347,7 @@ int process_command(mhopt_t *opts)
       {
         err = -3; goto error;
       }
-      if (!tries)
+      if (tries < 0)
       {
         err = -4; goto error;
       }
