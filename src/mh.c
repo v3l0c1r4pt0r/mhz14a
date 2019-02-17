@@ -246,11 +246,11 @@ ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
       FD_ZERO(&fds);
       FD_SET(fd, &fds);
 
-      if (func == &read)
+      if (func == (io_func_t) &read)
       {
         rfd = &fds;
       }
-      else if (func == &write)
+      else if (func == (io_func_t) &write)
       {
         wfd = &fds;
       }
