@@ -693,6 +693,141 @@ static void test_process_command(void **state)
   assert_int_equal(0x260, opts.gas_concentration);
 }
 
+static void test_process_command_span(void **state)
+{
+  mhopt_t opts = {
+    .device = "/dev/ttyS1",
+    .baudrate = 115200,
+    .databits = 7,
+    .parity = 'O',
+    .stopbits = 20,
+    .command = CMD_CALIBRATE_SPAN,
+    .tries = 1,
+    .span_point = 2000,
+  };
+  uint8_t expected = 0;
+  uint8_t actual;
+
+  expect_string(__wrap_open, pathname, "/dev/ttyS1");
+  expect_any(__wrap_open, flags);
+  will_return(__wrap_open, 1337);
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  expect_value(__wrap_tcsetattr, fd, 1337);
+  expect_value(__wrap_tcsetattr, optional_actions, TCSANOW);
+  expect_not_value(__wrap_tcsetattr, termios_p, NULL);
+  expect_value(__wrap_tcsetattr, c_iflag, IUTF8|IXON|ICRNL);
+  expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
+  expect_value(__wrap_tcsetattr, c_cflag,
+      CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
+  expect_value(__wrap_tcsetattr, c_lflag,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
+  expect_value(__wrap_tcsetattr, c_line, 0);
+  expect_string(__wrap_tcsetattr, c_cc,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  expect_value(__wrap_tcsetattr, c_ispeed, B115200);
+  expect_value(__wrap_tcsetattr, c_ospeed, B115200);
+  will_return(__wrap_tcsetattr, 0);
+
+  expect_value(__wrap_write, fd, 1337);
+  expect_memory(__wrap_write, buf,
+      "\xff\x01\x88\x07\xd0\0\0\0\xa0", 9);
+  will_return(__wrap_write, 9);
+
+//expect_value(__wrap_read, fd, 1337);
+//expect_any(__wrap_read, buf);
+//will_return(__wrap_read, "\xff\x86\x02\x60\x47\0\0\0\xd1");
+//will_return(__wrap_read, 9);
+
+  expect_value(__wrap_close, fd, 1337);
+  will_return(__wrap_close, 0);
+
+  actual = process_command(&opts);
+
+  assert_int_equal(expected, actual);
+}
+
+static void test_process_command_zero(void **state)
+{
+  mhopt_t opts = {
+    .device = "/dev/ttyS1",
+    .baudrate = 115200,
+    .databits = 7,
+    .parity = 'O',
+    .stopbits = 20,
+    .command = CMD_CALIBRATE_ZERO,
+    .tries = 1,
+  };
+  uint8_t expected = 0;
+  uint8_t actual;
+
+  expect_string(__wrap_open, pathname, "/dev/ttyS1");
+  expect_any(__wrap_open, flags);
+  will_return(__wrap_open, 1337);
+
+  expect_value(__wrap_tcgetattr, fd, 1337);
+  expect_not_value(__wrap_tcgetattr, termios_p, NULL);
+  will_return(__wrap_tcgetattr, IUTF8|IXON|ICRNL); /* c_iflag */
+  will_return(__wrap_tcgetattr, OPOST|ONLCR); /* c_oflag */
+  will_return(__wrap_tcgetattr, HUPCL|CREAD|CS8|B38400); /* c_cflag */
+  will_return(__wrap_tcgetattr,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK|ECHOE|ECHO|ICANON|ISIG); /* c_lflag */
+  will_return(__wrap_tcgetattr, 0); /* c_line */
+  will_return(__wrap_tcgetattr,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  /* c_cc */
+  will_return(__wrap_tcgetattr, B9600); /* c_ispeed */
+  will_return(__wrap_tcgetattr, B9600); /* c_ospeed */
+  will_return(__wrap_tcgetattr, 0);
+
+  expect_value(__wrap_tcsetattr, fd, 1337);
+  expect_value(__wrap_tcsetattr, optional_actions, TCSANOW);
+  expect_not_value(__wrap_tcsetattr, termios_p, NULL);
+  expect_value(__wrap_tcsetattr, c_iflag, IUTF8|IXON|ICRNL);
+  expect_value(__wrap_tcsetattr, c_oflag, OPOST|ONLCR);
+  expect_value(__wrap_tcsetattr, c_cflag,
+      CLOCAL|HUPCL|CREAD|PARENB|PARODD|CSTOPB|CS7|B115200);
+  expect_value(__wrap_tcsetattr, c_lflag,
+      IEXTEN|ECHOKE|ECHOCTL|ECHOK);
+  expect_value(__wrap_tcsetattr, c_line, 0);
+  expect_string(__wrap_tcsetattr, c_cc,
+      "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+  expect_value(__wrap_tcsetattr, c_ispeed, B115200);
+  expect_value(__wrap_tcsetattr, c_ospeed, B115200);
+  will_return(__wrap_tcsetattr, 0);
+
+  expect_value(__wrap_write, fd, 1337);
+  expect_memory(__wrap_write, buf,
+      "\xff\x01\x87\0\0\0\0\0\x78", 9);
+  will_return(__wrap_write, 9);
+
+//expect_value(__wrap_read, fd, 1337);
+//expect_any(__wrap_read, buf);
+//will_return(__wrap_read, "\xff\x86\x02\x60\x47\0\0\0\xd1");
+//will_return(__wrap_read, 9);
+
+  expect_value(__wrap_close, fd, 1337);
+  will_return(__wrap_close, 0);
+
+  actual = process_command(&opts);
+
+  assert_int_equal(expected, actual);
+}
+
 static void test_process_command_write_again(void **state)
 {
   mhopt_t opts = {
@@ -1198,6 +1333,8 @@ int main()
     cmocka_unit_test(test_perform_io_error),
     cmocka_unit_test(test_perform_io_time),
     cmocka_unit_test(test_process_command),
+    cmocka_unit_test(test_process_command_span),
+    cmocka_unit_test(test_process_command_zero),
     cmocka_unit_test(test_process_command_write_intr),
     cmocka_unit_test(test_process_command_read_intr),
     cmocka_unit_test(test_process_command_write_again),
