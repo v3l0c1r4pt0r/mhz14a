@@ -125,7 +125,7 @@ static void test_main_read(void **state)
   expect_value(__wrap_process_command, baudrate, 115200);
   expect_value(__wrap_process_command, databits, 9);
   expect_value(__wrap_process_command, parity, 'E');
-  expect_value(__wrap_process_command, stopbits, 2);
+  expect_value(__wrap_process_command, stopbits, 20);
   expect_value(__wrap_process_command, command, CMD_GAS_CONCENTRATION);
   expect_value(__wrap_process_command, gas_concentration, 0);
   expect_value(__wrap_process_command, span_point, 0);
@@ -146,7 +146,7 @@ static void test_main_span(void **state)
   expect_value(__wrap_process_command, baudrate, 9600);
   expect_value(__wrap_process_command, databits, 8);
   expect_value(__wrap_process_command, parity, 'N');
-  expect_value(__wrap_process_command, stopbits, 1);
+  expect_value(__wrap_process_command, stopbits, 10);
   expect_value(__wrap_process_command, command, CMD_CALIBRATE_SPAN);
   expect_value(__wrap_process_command, gas_concentration, 0);
   expect_value(__wrap_process_command, span_point, 65535);
@@ -177,7 +177,7 @@ static void test_main_zero(void **state)
   expect_value(__wrap_process_command, baudrate, 9600);
   expect_value(__wrap_process_command, databits, 8);
   expect_value(__wrap_process_command, parity, 'N');
-  expect_value(__wrap_process_command, stopbits, 1);
+  expect_value(__wrap_process_command, stopbits, 10);
   expect_value(__wrap_process_command, command, CMD_CALIBRATE_ZERO);
   expect_value(__wrap_process_command, gas_concentration, 0);
   expect_value(__wrap_process_command, span_point, 0);
