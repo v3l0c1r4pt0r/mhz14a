@@ -238,6 +238,7 @@ ssize_t perform_io(io_func_t func, int fd, void *buf, size_t count,
   {
     if (timeout != 0)
     {
+      DEBUG("set timeout for data processing to %ds", timeout);
       /* select descriptor to ensure that it will not block */
       tv.tv_sec = timeout;
       tv.tv_usec = 0;
@@ -321,10 +322,12 @@ int process_command(mhopt_t *opts)
       tries = opts->tries;
       while (tries--)
       {
+        INFO("trying communications for %d time (out of %d)", opts->tries - tries, opts->tries);
         err = perform_io((io_func_t) write, fd, &packet, sizeof(packet),
             opts->timeout);
         if (err != sizeof(packet))
         {
+          ERROR("during write to device");
           perror("write");
           continue;
         }
@@ -334,6 +337,7 @@ int process_command(mhopt_t *opts)
             opts->timeout);
         if (err != sizeof(packet))
         {
+          ERROR("during read from device");
           perror("read");
           continue;
         }
