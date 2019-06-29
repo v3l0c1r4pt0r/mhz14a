@@ -6,13 +6,22 @@ MH-Z14A CO2 sensor reader
 
 Program uses cmake as a build system. It is encouraged to compile it out of
 source, e.g. in root of the repository one can execute:
+
 ```
 mkdir -p build && cd build
 cmake ..
 make
+sudo make install
 ```
 
-This will leave mhz14a binary in `build/src/` of the repos root.
+By default `mhz14a` binary should be installed to /usr/local/bin. If you have it
+added to your `$PATH`, you are able to type:
+
+```
+mhz14a -h
+```
+
+This shows short summary of program options.
 
 ## Usage
 
